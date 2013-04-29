@@ -1,0 +1,11 @@
+Source: upstart-neos
+Section: system
+Priority: standard
+Maintainer: Aliaksei Katovich <aliaksei.katovich@gmail.com>
+Standards-Version: 1.0.0
+Build-Depends: debhelper
+
+Package: upstart-neos
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: start neos

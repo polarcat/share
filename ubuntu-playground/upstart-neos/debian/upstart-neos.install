@@ -1,0 +1,2 @@
+debian/neos.conf etc/init/
+debian/startneos bin/

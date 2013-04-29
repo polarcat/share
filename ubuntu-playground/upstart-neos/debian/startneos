@@ -1,0 +1,38 @@
+#!/bin/sh
+
+_base=/root/neos
+
+_exec() {
+	exec ./neos $1 $2 >/system/neos.log 2>/system/neos.err
+}
+
+_parse_param() {
+	export IFS='x'; _exec $2
+}
+
+_parse_cmdline() {
+	while [ $# -gt 1 ]; do
+		case $1 in
+		disp=*) export IFS='='; _parse_param $1; exit 0;;
+		esac
+		shift
+	done
+}
+
+if pidof neos; then
+	skill -9 neos
+fi
+
+while :; do
+	if [ -x $_base/neos ]; then
+		break
+	fi
+	sleep 5
+done
+
+if [ -f /etc/profile.d/tslib ]; then
+	. /etc/profile.d/tslib
+fi
+
+cd $_base
+_parse_cmdline $(cat /proc/cmdline)
