@@ -1,0 +1,44 @@
+#!/bin/sh
+#
+# Configure usb network according to kernel command line parameters.
+#
+# Example: ip=172.16.1.2 vendor=MyVendorName,0xffff
+#
+
+_enable_usb()
+{
+	echo $1 > /sys/class/android_usb/android0/f_rndis/manufacturer
+	echo $2 > /sys/class/android_usb/android0/f_rndis/vendorID
+	echo 1 > /sys/class/android_usb/android0/f_rndis/wceis
+
+	echo 0 > /sys/class/android_usb/android0/enable
+	echo $2 > /sys/class/android_usb/android0/idVendor
+	echo 0 > /sys/class/android_usb/android0/idProduct
+	echo rndis > /sys/class/android_usb/android0/functions
+	echo 224 > /sys/class/android_usb/android0/bDeviceClass
+	echo 2 > /sys/class/android_usb/android0/enable
+}
+
+_parse_vendor()
+{
+	export IFS=','; _enable_usb $2
+}
+
+_parse_ip()
+{
+	ifconfig rndis0 $2 netmask 255.255.255.0
+}
+
+_parse_cmdline()
+{
+	while [ $# -gt 1 ]; do
+		case $1 in
+		ip=*) export IFS='='; _parse_ip $1;;
+		vendor=*) export='='; _parse_vendor $1;;
+		esac
+		shift
+	done
+}
+
+_enable_usb
+_parse_cmdline $(cat /proc/cmdline)

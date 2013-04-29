@@ -1,0 +1,2 @@
+debian/usbnet.conf etc/init/
+debian/usbnet bin/
