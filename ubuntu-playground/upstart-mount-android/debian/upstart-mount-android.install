@@ -1,0 +1,2 @@
+debian/mount-android.conf etc/init/
+debian/mount-android bin/
