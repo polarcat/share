@@ -1,0 +1,2 @@
+debian/serial-console.conf etc/init/
+debian/serial-console bin/

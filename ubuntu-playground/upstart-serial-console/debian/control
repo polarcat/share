@@ -1,0 +1,11 @@
+Source: upstart-serial-console
+Section: system
+Priority: standard
+Maintainer: Aliaksei Katovich <aliaksei.katovich@gmail.com>
+Standards-Version: 1.0.0
+Build-Depends: debhelper
+
+Package: upstart-serial-console
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: serial console
