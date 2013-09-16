@@ -1,0 +1,118 @@
+#!/bin/bash
+
+_name=$(basename $0)
+_home=/tmp/$USER/$_name
+_temp=$_home/temp
+_list=$_home/list
+_show=$_home/show
+_rnum=$_home/rnum
+_plug=$HOME/.xwinlist.d/
+_dump=''
+_geom=''
+_rnum=0
+_hrow=26
+
+_wctl()
+{
+	wmctrl -i -a $1
+}
+
+mkdir -p $_home
+mkdir -p $_plug
+
+# check if dialog is already run
+id=$(wmctrl -l -x | grep -iE "yad.winlist" | cut -f1 -d' ')
+
+if [ -n "$id" ]; then
+	_wctl $id
+	exit 0
+fi
+
+# prepare sorted list with defined icons
+echo -n > $_temp
+wmctrl -l -x | grep -vE "[[:blank:]]\-1" | sed "s/['\`´]//g" |
+while read wid tmp class usr cmd; do
+	icon=$(echo $class | cut -f2 -d'.' | tr '[:upper:]' '[:lower:]')
+	case $icon in
+		thunar) icon=folder ;;
+		xterm|urxvt) icon=terminal ;;
+		firefox) icon=applications-internet ;;
+		*) ;;
+	esac
+	echo "$class $icon $wid $cmd" >> $_temp
+done
+sort $_temp > $_list
+_rnum=$(wc -l $_list | cut -f1 -d' ')
+if [ $_rnum -lt 3 ]; then
+	_rnum=3
+else
+	_rnum=$((_rnum + 1))
+fi
+
+if [ -z "$XWINLIST_GEOMETRY" ]; then
+	_geom="--center --width 500 --height $(($_rnum * $_hrow))"
+elif [ "$XWINLIST_GEOMETRY" = "auto" ]; then
+	x=$(xdotool getmouselocation | cut -f2 -d':' | cut -f1 -d' ')
+	h=$(($_rnum * $_hrow))
+	y=$(xdotool getmouselocation | cut -f3 -d':' | cut -f1 -d' ')
+	y=$((y - h - 10))
+	_geom="--geometry 500x$h+$x+$y"
+	echo $_rnum: $_geom
+else
+	_geom="--geometry $XWINLIST_GEOMETRY"
+fi
+
+# keep out --undecorated option
+# prepare script
+echo -n "/opt/bin/yad \
+--title 'Open windows' \
+--class 'winlist' \
+--borders 4 \
+--skip-taskbar \
+--search-column 3 \
+--no-markup \
+--no-buttons \
+$_geom \
+--list \
+--print-column 4 \
+--hide-column 4 \
+--expand-column 3 \
+--no-headers \
+--column 1 \
+--column 2:IMG \
+--column 3 \
+--column 4" > $_show
+
+_status="yes"
+if echo $@ | grep -qE "\--no-status"; then
+	_status=''
+fi
+
+# prepare list for dialog
+cat $_list | while read class icon wid cmd; do
+	if [ -n "$_status" ]; then
+		if xwininfo -id $wid | grep -qE "IsUnMapped"; then
+			min=".."
+		else
+			min="::"
+		fi
+	fi
+	cmd=$(echo $cmd | sed 's/["]//g;s/^[-]//')
+        echo -n " \"$min\" \"$icon\" \"$cmd\" \"$wid\"" >> $_show
+done
+
+# show dialog
+chmod +x $_show
+ret=$($_show)
+
+# process result
+if [ -n "$ret" ]; then
+	wid=$(echo $ret | sed 's/^.*\[wid://;s/\].*$//;s/[|]//g')
+	_wctl $wid
+	if [ -d $_plug ]; then
+		cd $_plug
+		for cmd in *; do
+			exec $cmd $wid >/dev/null 2>&1
+		done
+	fi
+fi

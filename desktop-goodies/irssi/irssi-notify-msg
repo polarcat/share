@@ -1,0 +1,71 @@
+#!/bin/sh
+
+_tmp=/tmp/$USER
+_ipc=$_tmp/irssi-notify.ipc
+_app=$(basename $0)
+_scr=/tmp/$USER/irssi-notify-loop
+_pid=$$
+
+_grep()
+{
+	ps ax |
+	grep -E "$@" |
+	grep -v grep |
+	grep -v vim |
+	sed 's/^[[:blank:]]\+//' |
+	grep -vE "^$_pid" |
+	cut -f1 -d' '
+}
+
+_stop()
+{
+	_grep $1 | while read pid; do
+		kill $pid
+	done
+}
+
+_recv()
+{
+	killall -9 play >/dev/null 2>&1
+	exec play -q /usr/share/sounds/purple/receive.wav &
+}
+
+_send()
+{
+	killall -9 play >/dev/null 2>&1
+	exec play -q /usr/share/sounds/purple/send.wav &
+	irssi-notify-show
+}
+
+if [ -n "$1" -a -n "$2" ]; then
+	if [ "$1" = "$2" ]; then
+		_send
+		exit 0
+	fi
+fi
+
+_recv
+mkdir -p $_tmp
+mkfifo $_ipc 2>/dev/null
+_stop $_scr >/dev/null 2>&1
+
+(
+	echo "#!/bin/sh"
+	echo "i=0"
+	echo "while :; do"
+	echo "  if [ \$i -eq 0 ]; then"
+	echo "    echo \"icon:face-smile\" > $_ipc"
+	echo "    i=1"
+	echo "  else"
+	echo "    echo \"icon:user-invisible\" > $_ipc"
+	echo "    i=0"
+	echo "  fi"
+	echo "  if [ \$? -ne 0 ]; then"
+	echo "    break"
+	echo "  fi"
+	echo "sleep 1"
+	echo "done"
+) > $_scr 2>/dev/null
+chmod +x $_scr
+exec $_scr >/dev/null >/dev/null 2>&1 &
+_stop $_app >/dev/null 2>&1

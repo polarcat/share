@@ -1,0 +1,44 @@
+#!/bin/sh
+
+_tmp=/tmp/$USER/
+_ipc=$_tmp/irssi-notify.ipc
+_app=$(basename $0)
+_pid=$$
+
+_grep()
+{
+        ps ax |
+        grep -E "$@" |
+        grep -v grep |
+        grep -v vim |
+        sed 's/^[[:blank:]]\+//' |
+        grep -vE "^$_pid" |
+        cut -f1 -d' '
+}
+
+_kill()
+{
+	kill $@ >/dev/null 2>&1
+}
+
+mkdir -p $_tmp
+mkfifo $_ipc 2>/dev/null
+
+_grep $_app | while read pid; do
+	_kill $pid
+done
+
+_grep "tail.*$_ipc" | while read pid; do
+	_kill $pid
+done
+
+_grep "yad.*irssi" | while read pid; do
+	_kill $pid
+done
+
+tail -f $_ipc |
+yad --listen \
+	--notification \
+	--image user-online \
+	--command irssi-notify-show \
+	--text "irssi notifier" >/dev/null 2>&1

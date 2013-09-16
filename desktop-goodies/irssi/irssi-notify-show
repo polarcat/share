@@ -1,0 +1,38 @@
+#!/bin/sh
+
+_tmp=/tmp/$USER
+_ipc=$_tmp/irssi-notify.ipc
+
+_grep()
+{
+	ps ax |
+	grep -E "$@" |
+	grep -v grep |
+	grep -v vim |
+	sed 's/^[[:blank:]]\+//' |
+	cut -f1 -d' '
+}
+
+_kill()
+{
+	kill $@ >/dev/null 2>&1
+}
+
+if ! wmctrl -l | grep -qE "$1.*irssi"; then
+	exit 0
+fi
+
+xdotool set_window --classname URxvt --class user-invisible $1
+
+mkdir -p $_tmp
+mkfifo $_ipc 2>/dev/null
+
+_grep irssi-notify-msg | while read pid; do
+	_kill $pid
+done
+
+_grep irssi-notify-loop | while read pid; do
+	_kill $pid
+done
+
+echo "icon:user-online" > $_ipc
