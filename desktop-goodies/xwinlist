@@ -35,7 +35,7 @@ while read wid tmp class usr cmd; do
 	icon=$(echo $class | cut -f2 -d'.' | tr '[:upper:]' '[:lower:]')
 	case $icon in
 		thunar) icon=folder ;;
-		xterm|urxvt) icon=terminal ;;
+		xterm|urxvt) icon=utilities-terminal ;;
 		firefox) icon=applications-internet ;;
 		*) ;;
 	esac
