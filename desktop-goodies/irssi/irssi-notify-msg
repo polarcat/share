@@ -24,27 +24,42 @@ _stop()
 	done
 }
 
+_icon()
+{
+	local wid=$(wmctrl -p -l | grep $1 | cut -f1 -d' ')
+
+	if [ -z "$wid" ]; then
+		return
+	fi
+	xdotool set_window --classname URxvt --class $2 $wid 2>/dev/null
+}
+
 _recv()
 {
+
 	killall -9 play >/dev/null 2>&1
 	exec play -q /usr/share/sounds/purple/receive.wav &
+	_icon $1 face-smile
 }
 
 _send()
 {
+	local wid=$(wmctrl -p -l | grep $1 | cut -f1 -d' ')
+
 	killall -9 play >/dev/null 2>&1
 	exec play -q /usr/share/sounds/purple/send.wav &
 	irssi-notify-show
+	_icon $1 user-invisible
 }
 
 if [ -n "$1" -a -n "$2" ]; then
 	if [ "$1" = "$2" ]; then
-		_send
+		_send $3
 		exit 0
 	fi
 fi
 
-_recv
+_recv $3
 mkdir -p $_tmp
 mkfifo $_ipc 2>/dev/null
 _stop $_scr >/dev/null 2>&1
