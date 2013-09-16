@@ -64,7 +64,7 @@ fi
 
 # keep out --undecorated option
 # prepare script
-echo -n "/opt/bin/yad \
+echo -n "yad \
 --title 'Open windows' \
 --class 'winlist' \
 --borders 4 \
