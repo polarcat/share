@@ -1,0 +1,63 @@
+#!/bin/sh
+
+_calc()
+{
+	# % of size
+	echo "$1 + ($1 * 0.20)" | bc | xargs printf "%d" 2>/dev/null
+}
+
+_mkimage()
+{
+	local mnt=mnt
+	local img=$(basename $1).img
+	local len=$(sudo du -bs $1 | cut -f1)
+
+	mkdir -p $mnt
+
+	if [ ! -d $mnt ]; then
+		echo "$mnt: no such directory"
+		exit 1
+	fi
+
+	if grep $mnt /proc/mounts; then
+		echo "$mnt: already mounted"
+		sudo umount $mnt
+	fi
+
+	echo "Original size: $len"
+	len=$(_calc $len)
+	echo "Adjusted size: $len"
+	echo "Creating image $img"
+	dd if=/dev/zero of=$img count=$((len / 1048576)) bs=1048576
+	mkfs.ext4 $img
+	sudo mount $img $mnt
+	sudo cp -ra $1/* $mnt/
+	sudo chown -R root.root $mnt/*
+	sudo umount $mnt
+	ls -l $img
+}
+
+if [ -z $1 ]; then
+	app=$(basename $0)
+	echo "Usage: $app <rootfs>"
+	echo "Example: $app /chroots/linux-rootfs"
+	exit 0
+fi
+
+if ! which bc >/dev/null 2>&1; then
+	echo "bc: not installed"
+	exit 1
+fi
+
+if ! which mkfs.ext4 >/dev/null 2>&1; then
+	echo "mkfs.ext4: not installed"
+	exit 1
+fi
+
+_dir=$(dirname $1/foo)
+if [ ! -d $_dir ]; then
+	echo "$_dir: no such directory"
+	exit 1
+fi
+
+_mkimage $_dir
