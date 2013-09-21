@@ -18,11 +18,9 @@ _kill()
 	kill $@ >/dev/null 2>&1
 }
 
-if ! wmctrl -l | grep -qE "$1.*irssi"; then
-	exit 0
+if [ -n "$1" ]; then
+	xdotool set_window --classname URxvt --class user-invisible $1
 fi
-
-xdotool set_window --classname URxvt --class user-invisible $1
 
 mkdir -p $_tmp
 mkfifo $_ipc 2>/dev/null
