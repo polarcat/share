@@ -12,9 +12,12 @@ $VERSION = '0.0.1';
 	license     => 'GNU General Public License',
 );
 
+my $home = "$ENV{HOME}/.irssi/pids";
+my $ppid = getppid();
+
 sub pub_msg {
 	my ($server, $msg, $nick, $address, $target) = @_;
-        my $ppid = getppid();
+	`touch $home/$ppid`;
 	`irssi-notify-msg "$nick" "$address" "$ppid" >/dev/null 2>&1 &`;
 }
 
@@ -24,4 +27,6 @@ Irssi::signal_add_last("message own_public", "pub_msg");
 Irssi::signal_add_last("message own_private", "pub_msg");
 Irssi::signal_add_last("dcc request", "pub_msg");
 #Irssi::signal_add_last("print text", "pub_msg");
-Irssi::print("PID: " . getppid());
+Irssi::print("PID: " . $ppid);
+mkdir($home);
+`touch $home/$ppid`;
