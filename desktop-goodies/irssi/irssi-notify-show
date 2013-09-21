@@ -18,8 +18,20 @@ _kill()
 	kill $@ >/dev/null 2>&1
 }
 
-if [ -n "$1" ]; then
+_icon()
+{
 	xdotool set_window --classname URxvt --class user-invisible $1
+}
+
+if [ -n "$1" ]; then
+	pid=$(wmctrl -l -p | grep "$1" | sed 's/[[:blank:]]\+/ /g;' | cut -f3 -d' ')
+	if [ ! -d /proc/$pid ]; then
+		rm -f ~/.irssi/pids/$pid
+	else
+		if [ -f ~/.irssi/pids/$pid ]; then
+			_icon $1
+		fi
+	fi
 fi
 
 mkdir -p $_tmp
