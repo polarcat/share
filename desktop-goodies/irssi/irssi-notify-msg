@@ -48,7 +48,7 @@ _send()
 
 	killall -9 play >/dev/null 2>&1
 	exec play -q /usr/share/sounds/purple/send.wav &
-	irssi-notify-show
+	irssi-notify-show $1
 	_icon $1 user-invisible
 }
 
