@@ -14,7 +14,9 @@ _hrow=26
 
 _wctl()
 {
-	wmctrl -i -a $1
+	xdotool windowactivate $1
+	xdotool windowfocus $1
+	# wmctrl -i -a $1
 }
 
 mkdir -p $_home
