@@ -38,7 +38,7 @@ while read wid tmp class usr cmd; do
 	case $icon in
 		thunar) icon=folder ;;
 		xterm|urxvt) icon=utilities-terminal ;;
-		firefox) icon=applications-internet ;;
+		firefox|epiphany) icon=applications-internet ;;
 		*) ;;
 	esac
 	echo "$class $icon $wid $cmd" >> $_temp
@@ -99,7 +99,7 @@ cat $_list | while read class icon wid cmd; do
 			min="::"
 		fi
 	fi
-	cmd=$(echo $cmd | sed 's/["]//g;s/^[-]//')
+	cmd=$(echo $cmd | sed 's/["]//g;s/^[-]//' | iconv -f utf8 -t utf8)
         echo -n " \"$min\" \"$icon\" \"$cmd\" \"$wid\"" >> $_show
 done
 
