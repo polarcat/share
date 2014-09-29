@@ -1,0 +1,59 @@
+#!/bin/sh
+
+tmp=/tmp/$USER/$(basename $0)
+win=$(xdotool getactivewindow)
+
+normfg="#7f7f7f"
+normbg="#000000"
+norm00="#000000"
+norm01="#8B3626"
+norm02="#228B22"
+norm03="#CDCDB4"
+norm04="#31609C"
+norm05="#818025"
+norm06="#2F4F4F"
+norm07="#f05000"
+norm08="#4D4D4D"
+norm09="#FF6347"
+norm10="#09A709"
+norm11="#408010"
+norm12="#D9D9D9"
+norm13="#A4797A"
+norm14="#4D6C6C"
+norm15="#B3B3B3"
+
+norm04="#818025"
+norm05="#406070"
+
+invfg="#101010"
+invbg="#ffffff"
+invhl="#505050"
+inv00="#ffffff"
+inv01="#858585"
+inv11="#408010"
+
+mkdir -p $tmp
+
+if [ ! -s $tmp/$win ]; then
+	echo 0 > $tmp/$win
+fi
+
+#xdotool windowactivate $win
+#xdotool windowfocus $win
+while read n; do
+	export TERM=xterm
+	if [ -n "$n" -a $n -eq 0 ]; then
+		xtermcontrol -f --fg=$invfg --bg=$invbg --highlight=$invhl \
+			--color0=$inv00 --color12=$inv01 --color3="#000000" \
+			--color11=$inv11
+		echo 1 > $tmp/$win
+	else
+		xtermcontrol -f --fg=$normfg --bg=$normbg --color0=$norm00 \
+			--color1=$norm01 --color2=$norm02 --color3=$norm03 \
+			--color4=$norm04 --color5=$norm05 --color6=$norm06 \
+			--color7=$norm07 --color8=$norm08 --color9=$norm09 \
+			--color10=$norm10 --color11=$norm11 --color12=$norm12 \
+			--color13=$norm13 --color14=$norm14 --color15=$norm15
+		echo 0 > $tmp/$win
+	fi
+done < $tmp/$win

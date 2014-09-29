@@ -1,0 +1,72 @@
+#!/bin/sh
+
+getwidth()
+{
+	xrandr | grep -E "[[:blank:]]connected" | cut -f3 -d' ' | cut -f1 -d'x'
+}
+
+getheight()
+{
+	xrandr | grep -E "[[:blank:]]connected" |
+	cut -f3 -d' ' | cut -f2 -d'x' | cut -f1 -d'+'
+}
+
+printhelp()
+{
+	echo "Usage: $(basename $0) <options>"
+	echo "Options:"
+	echo "  1          left-top"
+	echo "  2          right-top"
+	echo "  3          left-bottom"
+	echo "  4          right-bottom"
+	exit 0
+}
+
+if [ $# -lt 1 ]; then
+	printhelp
+fi
+
+tx=18
+bx=24
+dw=$(getwidth)
+dh=$(($(getheight) - $tx - $bx))
+
+case $1 in
+	1) wx=0; wy=$tx;
+	   ww=$((dw / 2 - 2)); wh=$((dh / 2));
+	   ;;
+	2) wx=$((dw / 2)); wy=$tx;
+	   ww=$((dw / 2 - 2)); wh=$((dh / 2));
+	   ;;
+	3) wx=0; wy=$((dh / 2 + $tx));
+	   ww=$((dw / 2 - 2)); wh=$((dh / 2));
+	   ;;
+	4) wx=$((dw / 2 - 2)); wy=$((dh / 2 + $tx));
+	   ww=$((dw / 2 - 2)); wh=$((dh / 2));
+	   ;;
+	5) wx=0; wy=$tx;
+	   ww=$dw; wh=$((dh / 2));
+	   ;;
+	6) wx=0; wy=$((dh / 2 + $tx));
+	   ww=$dw; wh=$((dh / 2));
+	   ;;
+	7) wx=0; wy=$tx;
+	   ww=$((dw / 2 - 2)); wh=$dh;
+	   ;;
+	8) wx=$((dw / 2)); wy=$tx;
+	   ww=$((dw / 2 - 2)); wh=$dh;
+	   ;;
+	9) wx=0; wy=$tx;
+	   ww=$dw; wh=$dh;
+	   ;;
+	*) printhelp
+esac
+
+#xtermcontrol -f --geometry=80x25+0+0
+wid=$(xdotool getactivewindow)
+xdotool getactivewindow windowsize $ww $wh \
+	windowmove $wx $wy \
+	windowactivate $wid \
+	windowfocus $wid \
+	windowmap $wid
+#xsetroot -name "$wid: $(xtermcontrol -f --get-geometry)"
