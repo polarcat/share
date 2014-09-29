@@ -46,3 +46,4 @@ _grep irssi-notify-loop | while read pid; do
 done
 
 echo "icon:user-online" > $_ipc
+sudo /opt/bin/laptop-led 0 on

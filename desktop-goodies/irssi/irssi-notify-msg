@@ -38,7 +38,8 @@ _recv()
 {
 
 	killall -9 play >/dev/null 2>&1
-	exec play -q /usr/share/sounds/purple/receive.wav &
+#	exec play -q /usr/share/sounds/purple/receive.wav &
+	sudo /opt/bin/laptop-led 0 blink
 	_icon $1 face-smile
 }
 
@@ -47,7 +48,8 @@ _send()
 	local wid=$(wmctrl -p -l | grep $1 | cut -f1 -d' ')
 
 	killall -9 play >/dev/null 2>&1
-	exec play -q /usr/share/sounds/purple/send.wav &
+#	exec play -q /usr/share/sounds/purple/send.wav &
+	sudo /opt/bin/laptop-led 0 off
 	irssi-notify-show $1
 	_icon $1 user-invisible
 }
