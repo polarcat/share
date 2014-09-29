@@ -38,7 +38,8 @@ while read wid tmp class usr cmd; do
 	case $icon in
 		thunar) icon=folder ;;
 		xterm|urxvt) icon=utilities-terminal ;;
-		firefox|epiphany) icon=applications-internet ;;
+		luakit|epiphany) icon=applications-internet ;;
+		firefox) icon=/opt/firefox/browser/chrome/icons/default/default16.png ;;
 		*) ;;
 	esac
 	echo "$class $icon $wid $cmd" >> $_temp
@@ -90,13 +91,23 @@ if echo $@ | grep -qE "\--no-status"; then
 	_status=''
 fi
 
+xsetroot -name "list"
+
 # prepare list for dialog
 cat $_list | while read class icon wid cmd; do
 	if [ -n "$_status" ]; then
-		if xwininfo -id $wid | grep -qE "IsUnMapped"; then
-			min=".."
+		if pidof dwm >/dev/null; then
+			if grep -qi $(($wid)) /tmp/dwm.out; then
+				min="(*)"
+			else
+				min=""
+			fi
 		else
-			min="::"
+			if xwininfo -id $wid | grep -qE "IsUnMapped"; then
+				min=".."
+			else
+				min="::"
+			fi
 		fi
 	fi
 	cmd=$(echo $cmd | sed 's/["]//g;s/^[-]//' | iconv -f utf8 -t utf8)
@@ -105,7 +116,7 @@ done
 
 # show dialog
 chmod +x $_show
-ret=$($_show)
+ret=$($_show 2>/dev/null)
 
 # process result
 if [ -n "$ret" ]; then
