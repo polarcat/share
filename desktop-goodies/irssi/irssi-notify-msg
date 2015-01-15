@@ -24,9 +24,28 @@ _stop()
 	done
 }
 
-_icon()
+_pwid()
 {
 	local wid=$(wmctrl -p -l | grep $1 | cut -f1 -d' ')
+	if [ -z "$wid" ]; then
+		pid=$(ps ax | grep -E "urxvt.*$1" | grep -v grep | cut -f1 -d' ')
+		if [ -z "$pid" ]; then
+			echo ""
+			return
+		fi
+		wid=$(wmctrl -p -l | grep $pid | cut -f1 -d' ')
+		if [ -z "$wid" ]; then
+			echo ""
+			return
+		fi
+		touch ~/.irssi/pids/$pid
+	fi
+	echo "$wid"
+}
+
+_icon()
+{
+	local wid=$(_pwid $1)
 
 	if [ -z "$wid" ]; then
 		return
@@ -36,7 +55,6 @@ _icon()
 
 _recv()
 {
-
 	killall -9 play >/dev/null 2>&1
 #	exec play -q /usr/share/sounds/purple/receive.wav &
 	sudo /opt/bin/laptop-led 0 blink
@@ -45,8 +63,6 @@ _recv()
 
 _send()
 {
-	local wid=$(wmctrl -p -l | grep $1 | cut -f1 -d' ')
-
 	killall -9 play >/dev/null 2>&1
 #	exec play -q /usr/share/sounds/purple/send.wav &
 	sudo /opt/bin/laptop-led 0 off
