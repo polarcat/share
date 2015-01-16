@@ -24,11 +24,18 @@ _stop()
 	done
 }
 
+_cpid()
+{
+	ps ax | grep -E "urxvt.*$1" | grep -v grep | \
+	sed 's/^[[:blank:]]\+//' | cut -f1 -d' '
+}
+
 _pwid()
 {
 	local wid=$(wmctrl -p -l | grep $1 | cut -f1 -d' ')
+
 	if [ -z "$wid" ]; then
-		pid=$(ps ax | grep -E "urxvt.*$1" | grep -v grep | cut -f1 -d' ')
+		pid=$(_cpid $1)
 		if [ -z "$pid" ]; then
 			echo ""
 			return
