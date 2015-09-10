@@ -2,23 +2,24 @@
 
 getwidth()
 {
-	xrandr | grep -E "[[:blank:]]connected" | cut -f3 -d' ' | cut -f1 -d'x'
+	xwininfo -root | grep geom |
+	sed 's/^.*geometry[[:blank:]]//;s/[x+]/ /g' | cut -f1 -d' '
 }
 
 getheight()
 {
-	xrandr | grep -E "[[:blank:]]connected" |
-	cut -f3 -d' ' | cut -f2 -d'x' | cut -f1 -d'+'
+	xwininfo -root | grep geom |
+	sed 's/^.*geometry[[:blank:]]//;s/[x+]/ /g' | cut -f2 -d' '
 }
 
 printhelp()
 {
 	echo "Usage: $(basename $0) <options>"
 	echo "Options:"
-	echo "  1          left-top"
-	echo "  2          right-top"
-	echo "  3          left-bottom"
-	echo "  4          right-bottom"
+	echo "  1  left-top"
+	echo "  2  right-top"
+	echo "  3  left-bottom"
+	echo "  4  right-bottom"
 	exit 0
 }
 
@@ -26,8 +27,9 @@ if [ $# -lt 1 ]; then
 	printhelp
 fi
 
-tx=18
-bx=24
+#tx=24
+tx=0
+bx=28
 dw=$(getwidth)
 dh=$(($(getheight) - $tx - $bx))
 
