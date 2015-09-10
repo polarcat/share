@@ -1,16 +1,21 @@
 #!/bin/bash
 
+theme=$HOME/.gtkrc-2.0-lite
+if [ -f $theme ]; then
+	export GTK2_RC_FILES=$theme
+fi
+
 _name=$(basename $0)
 _home=/tmp/$USER/$_name
 _temp=$_home/temp
 _list=$_home/list
 _show=$_home/show
 _rnum=$_home/rnum
-_plug=$HOME/.xwinlist.d/
 _dump=''
 _geom=''
 _rnum=0
 _hrow=26
+_args=$@
 
 _wctl()
 {
@@ -19,14 +24,21 @@ _wctl()
 	# wmctrl -i -a $1
 }
 
+_excluded()
+{
+	for item in $_args; do
+		if [ "$item" = "$1" ]; then
+			return 0
+		fi
+	done
+	return 1
+}
+
 mkdir -p $_home
-mkdir -p $_plug
 
-# check if dialog is already run
-id=$(wmctrl -l -x | grep -iE "yad.winlist" | cut -f1 -d' ')
-
-if [ -n "$id" ]; then
-	_wctl $id
+pid=$(wmctrl -l -x -p | grep -iE "yad.winlist" | cut -f4 -d' ')
+if [ -n "$pid" ]; then
+	kill $pid
 	exit 0
 fi
 
@@ -40,6 +52,7 @@ while read wid tmp class usr cmd; do
 		xterm|urxvt) icon=utilities-terminal ;;
 		luakit|epiphany) icon=applications-internet ;;
 		firefox) icon=/opt/firefox/browser/chrome/icons/default/default16.png ;;
+		google-chrome-stable) icon=/opt/google/chrome/product_logo_16.png ;;
 		*) ;;
 	esac
 	echo "$class $icon $wid $cmd" >> $_temp
@@ -91,16 +104,33 @@ if echo $@ | grep -qE "\--no-status"; then
 	_status=''
 fi
 
+thislist="/dev/null"
+
+setthislist()
+{
+	thislist="/tmp/.dwmout$2"
+}
+
+ifs=$IFS; IFS=':'; setthislist $DISPLAY; IFS=$ifs
+
 xsetroot -name "list"
 
 # prepare list for dialog
 cat $_list | while read class icon wid cmd; do
+	if _excluded $class; then
+		continue
+	fi
+
 	if [ -n "$_status" ]; then
-		if pidof dwm >/dev/null; then
-			if grep -qi $(($wid)) /tmp/dwm.out; then
-				min="(*)"
-			else
+		if pidof dwm-stable >/dev/null; then
+			if [ -z "$thislist" -o ! -f "$thislist" ]; then
 				min=""
+			else
+				if grep -qi $(($wid)) $thislist; then
+					min="(*)"
+				else
+					min=""
+				fi
 			fi
 		else
 			if xwininfo -id $wid | grep -qE "IsUnMapped"; then
@@ -122,10 +152,4 @@ ret=$($_show 2>/dev/null)
 if [ -n "$ret" ]; then
 	wid=$(echo $ret | sed 's/^.*\[wid://;s/\].*$//;s/[|]//g')
 	_wctl $wid
-	if [ -d $_plug ]; then
-		cd $_plug
-		for cmd in *; do
-			exec $cmd $wid >/dev/null 2>&1
-		done
-	fi
 fi
