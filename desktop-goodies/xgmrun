@@ -1,0 +1,13 @@
+#!/bin/sh
+
+theme=$HOME/.gtkrc-2.0-lite
+if [ -f $theme ]; then
+	export GTK2_RC_FILES=$theme
+fi
+
+winid=$(wmctrl -l -x | grep gmrun.Gmrun | cut -f1 -d' ')
+if [ -n "$winid" ]; then
+	wmctrl -i -a $winid
+else
+	exec gmrun &
+fi

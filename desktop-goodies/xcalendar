@@ -1,0 +1,17 @@
+#!/bin/sh
+
+theme=$HOME/.gtkrc-2.0-lite
+if [ -f $theme ]; then
+	export GTK2_RC_FILES=$theme
+fi
+
+getpid() { pid=$3; }
+getpid $(wmctrl -l -x -p | grep -iE "yad.calendar")
+
+if [ -n "$pid" ]; then
+	kill $pid
+	exit 0
+fi
+
+xsetroot -name "place 4 yad.calendar"
+exec yad --class calendar --title Calendar --calendar --mouse --no-buttons

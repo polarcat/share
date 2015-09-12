@@ -1,0 +1,99 @@
+#!/bin/sh
+
+theme=$HOME/.gtkrc-2.0-lite
+if [ -f $theme ]; then
+	export GTK2_RC_FILES=$theme
+fi
+
+getpid() { pid=$3; }
+getpid $(wmctrl -l -x -p | grep -iE "yad.suspend")
+
+if [ -n "$pid" ]; then
+	kill $pid
+	exit 0
+fi
+
+temp=/tmp/$USER/$(basename $0)
+base=/sys/class/net
+post=device/driver/
+
+mkdir -p $temp
+
+netdown()
+{
+	for dev in $base/*; do
+		dev=$(echo $dev | sed 's/^.*\///')
+
+		if [ -z "$dev" ]; then
+			continue
+		fi
+
+		if [ "$dev" == "lo" ]; then
+			continue
+		fi
+
+		if [ "$dev" == "sit0" ]; then
+			continue
+		fi
+
+		drv=$(ls -l $base/$dev/$post | grep module | sed 's/^.*\///')
+
+		if [ -z "$drv" ]; then
+			continue
+		fi
+
+		sudo ifconfig $dev
+		sudo modprobe -r $drv
+		if [ $? -ne 0 ]; then
+			err=$?
+			notify-send -i error -u critical "failed to unload $drv"
+			exit $err
+		fi
+	done
+}
+
+stop()
+{
+	wpa_cli disconnect
+	vbox-android-stop
+	killall chrome
+	killall firefox
+	killall luakit
+	if which start-pulseaudio-x11 >/dev/null 2>&1; then
+		start-pulseaudio-x11 -k
+	fi
+
+	/etc/init.d/bluetooth stop
+
+	monitor-off
+	xscreensaver-command --lock
+	sudo /etc/local.d/modules.stop
+	netdown
+	xdotool key Alt+Control+F1
+	sleep 2
+}
+
+start()
+{
+	sudo /etc/local.d/modules.start
+	if which start-pulseaudio-x11 >/dev/null 2>&1; then
+		start-pulseaudio-x11 --start
+	fi
+
+	/etc/init.d/bluetooth restart
+	wpacli
+}
+
+pidof xscreensaver
+if [ $? -ne 0 ]; then
+	exec xscreensaver -no-splash &
+fi
+
+yad --class suspend --title "Power manager" --center \
+	--text " You requested system suspend, continue? "
+
+if [ $? -eq 0 ]; then
+	stop >$temp/log 2>&1
+	sudo pm-suspend >>$temp/log 2>&1
+	start >>$temp/log 2>&1
+fi

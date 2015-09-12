@@ -1,0 +1,47 @@
+#!/bin/sh
+
+setmax() { max=$2; }
+setvol() { vol=$2; }
+
+parseinfo()
+{
+	while [ $# -ne 0 ]; do
+		case $1 in
+		*max=*) IFS='='; setmax $1; IFS=$ifs;;
+		*values=*) IFS='='; setvol $1; IFS=$ifs;;
+		esac
+		shift 1
+	done
+}
+
+cmd=$1
+ifs=$IFS
+cid=$(amixer controls | grep -iE "master.*playback.*volume")
+inf=$(echo $(amixer cget "$cid" | sed 's/^.*[,]max=/;max=/;s/[:,]/;/g'))
+max=0
+vol=0
+IFS=';'; parseinfo $inf; IFS=$ifs
+step=$((max / 10))
+
+if [ "$cmd" = "inc" ]; then
+	new=$((vol + step))
+elif [ "$cmd" = "dec" ]; then
+	new=$((vol - step))
+elif [ "$cmd" = "cur" ]; then
+	new=$vol
+elif [ "$cmd" = "off" ]; then
+	new=0
+else
+	new=$vol
+fi
+
+if [ $new -lt 0 ]; then
+	new=0
+elif [ $new -ge $max ]; then
+	new=$max
+fi
+
+amixer cset "$cid" $new,$new >/dev/null
+amixer sget Master |
+sed '/^ *Front\ Left: /{s/^.*\[\(.*\)%\].*/"mixer \1"/;p;};d;' |
+xargs xsetroot -name

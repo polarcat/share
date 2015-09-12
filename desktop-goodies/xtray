@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if wmctrl -l -x | grep -iE "stalonetray.stalonetray"; then
+	exit 0
+fi
+
+exec stalonetray --icon-gravity E -i 14 -bg "#000000" &

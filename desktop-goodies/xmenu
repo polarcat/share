@@ -1,0 +1,87 @@
+#!/bin/sh
+
+theme=$HOME/.gtkrc-2.0-lite
+if [ -f $theme ]; then
+	export GTK2_RC_FILES=$theme
+fi
+
+getpid() { pid=$3; }
+getpid $(wmctrl -l -x -p | grep -iE "yad.menu")
+
+if [ -n "$pid" ]; then
+	kill $pid
+	exit 0
+fi
+
+CMD="\
+yad --title 'Applications' --class 'menu' --borders 4 \
+--width=720 --height=450 \
+--skip-taskbar --list --no-markup --no-buttons \
+--no-headers --sort-by-name --center \
+--search-column 1 --print-column 3 --expand-column 5 \
+--hide-column 1 \
+--column 1 --column 2:IMG --column 3 --column 4 --column 5 "
+
+run()
+{
+awk -v cmd="$CMD" ' {
+	split($0, data, "=");
+	if (index(data[1], "Icon") == 1) {
+		col2 = data[2];
+	} else if (index(data[1], "Name") == 1) {
+		if (col4 == NULL)
+			col4 = data[2];
+	} else if (index(data[1], "Comment") == 1) {
+		if (col5 == NULL)
+			col5 = data[2];
+	} else if (index(data[1], "Exec") == 1) {
+		col3 = data[2];
+		split(col3, exec, " ");
+		if (index(col3, "%") != 0)
+			col3 = exec[1];
+
+		if (index(exec[1], "/") != 1) {
+			col1 = col3;
+		} else {
+			split(exec[1], base, "/");
+			col1 = base[length(base)];
+		}
+	}
+} ENDFILE {
+	if (length(col1))
+		args = sprintf("%s\"%s\" ", args, col1);
+	else
+		args = sprintf("%s\"\" ", args);
+
+	if (length(col2))
+		args = sprintf("%s\"%s\" ", args, col2);
+	else
+		args = sprintf("%s\"\" ", args);
+
+	if (length(col3))
+		args = sprintf("%s\"%s\" ", args, col3);
+	else
+		args = sprintf("%s\"\" ", args);
+
+	if (length(col4))
+		args = sprintf("%s\"%s\" ", args, col4);
+	else
+		args = sprintf("%s\"\" ", args);
+
+	if (length(col5))
+		args = sprintf("%s\"%s\" ", args, col5);
+	else
+		args = sprintf("%s\"\" ", args);
+
+	col4 = col5 = NULL;
+
+} END {
+	cmd = sprintf("exec %s %s 2>/dev/null", cmd, args);
+	system(cmd);
+}' $(ls -1 /usr/share/applications/*.desktop)
+}
+
+res=$(run | cut -f1 -d'|')
+if [ -n "$res" ]; then
+	$res
+fi
