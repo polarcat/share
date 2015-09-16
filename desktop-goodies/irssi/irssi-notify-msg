@@ -89,15 +89,27 @@ mkdir -p $_tmp
 mkfifo $_ipc 2>/dev/null
 _stop $_scr >/dev/null 2>&1
 
+if [ -f $HOME/.icons/irssi-message.png ]; then
+	_ico1=$HOME/.icons/irssi-message.png
+else
+	_ico1=face-smile
+fi
+
+if [ -f $HOME/.icons/irssi-typing.png ]; then
+	_ico2=$HOME/.icons/irssi-typing.png
+else
+	_ico2=user-invisible
+fi
+
 (
 	echo "#!/bin/sh"
 	echo "i=0"
 	echo "while :; do"
 	echo "  if [ \$i -eq 0 ]; then"
-	echo "    echo \"icon:face-smile\" > $_ipc"
+	echo "    echo \"icon:$_ico1\" > $_ipc"
 	echo "    i=1"
 	echo "  else"
-	echo "    echo \"icon:user-invisible\" > $_ipc"
+	echo "    echo \"icon:$_ico2\" > $_ipc"
 	echo "    i=0"
 	echo "  fi"
 	echo "  if [ \$? -ne 0 ]; then"

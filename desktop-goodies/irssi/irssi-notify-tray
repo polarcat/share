@@ -36,9 +36,15 @@ _grep "yad.*irssi" | while read pid; do
 	_kill $pid
 done
 
+if [ -f $HOME/.icons/irssi-online.png ]; then
+	_ico=$HOME/.icons/irssi-online.png
+else
+	_ico=user-online
+fi
+
 tail -f $_ipc |
 yad --listen \
 	--notification \
-	--image user-online \
+	--image $_ico \
 	--command irssi-notify-show \
 	--text "irssi notifier" >/dev/null 2>&1
