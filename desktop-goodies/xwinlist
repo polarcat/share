@@ -36,7 +36,8 @@ _excluded()
 
 mkdir -p $_home
 
-pid=$(wmctrl -l -x -p | grep -iE "yad.winlist" | cut -f4 -d' ')
+getpid() { pid=$3; }
+getpid $(wmctrl -l -x -p | grep -iE "yad.winlist")
 if [ -n "$pid" ]; then
 	kill $pid
 	exit 0
@@ -144,12 +145,28 @@ cat $_list | while read class icon wid cmd; do
         echo -n " \"$min\" \"$icon\" \"$cmd\" \"$wid\"" >> $_show
 done
 
+_postcmd()
+{
+	local postdir=$HOME/.xwinlist.d
+
+	echo "$@"
+	mkdir -p $postdir
+	if [ -n "$4" -a -d $postdir/$4 ]; then
+		for cmd in $postdir/$4/*; do
+			$cmd
+		done
+	fi
+}
+
+_setwid() { wid=$1; }
+
 # show dialog
 chmod +x $_show
 ret=$($_show 2>/dev/null)
 
 # process result
 if [ -n "$ret" ]; then
-	wid=$(echo $ret | sed 's/^.*\[wid://;s/\].*$//;s/[|]//g')
+	ifs=$IFS; IFS='|'; _setwid $ret; IFS=$ifs
 	_wctl $wid
+	_postcmd $(wmctrl -l | grep $wid)
 fi
