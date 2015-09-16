@@ -4,4 +4,5 @@ if wmctrl -l -x | grep -iE "stalonetray.stalonetray"; then
 	exit 0
 fi
 
+xsetroot -name "dwmtray stalonetray"
 exec stalonetray --icon-gravity E -i 14 -bg "#000000" &
