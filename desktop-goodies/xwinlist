@@ -15,23 +15,12 @@ _dump=''
 _geom=''
 _rnum=0
 _hrow=26
-_args=$@
 
 _wctl()
 {
 	xdotool windowactivate $1
 	xdotool windowfocus $1
 	# wmctrl -i -a $1
-}
-
-_excluded()
-{
-	for item in $_args; do
-		if [ "$item" = "$1" ]; then
-			return 0
-		fi
-	done
-	return 1
 }
 
 mkdir -p $_home
@@ -118,7 +107,15 @@ xsetroot -name "list"
 
 # prepare list for dialog
 cat $_list | while read class icon wid cmd; do
-	if _excluded $class; then
+	if [ "$class" = "stalonetray.stalonetray" ]; then
+		continue
+	fi
+
+	if [ "$class" = "XXkb.XXkb" ]; then
+		continue
+	fi
+
+	if [ "$class" = "yad.winlist" ]; then
 		continue
 	fi
 
@@ -166,6 +163,9 @@ ret=$($_show 2>/dev/null)
 
 # process result
 if [ -n "$ret" ]; then
+	if [ "(nil)|" = "$ret" ]; then
+		exit 0
+	fi
 	ifs=$IFS; IFS='|'; _setwid $ret; IFS=$ifs
 	_wctl $wid
 	_postcmd $(wmctrl -l | grep $wid)
