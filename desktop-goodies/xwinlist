@@ -119,6 +119,10 @@ cat $_list | while read class icon wid cmd; do
 		continue
 	fi
 
+	if [ "$class" = "dwmplug" ]; then
+		continue
+	fi
+
 	if [ -n "$_status" ]; then
 		if pidof dwm-stable >/dev/null; then
 			if [ -z "$thislist" -o ! -f "$thislist" ]; then
