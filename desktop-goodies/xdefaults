@@ -1,0 +1,249 @@
+*font:			-*-fixed-bold-r-*-*-14-*-*-*-*-*-iso10646-1
+
+*font1:			-*-fixed-*-*-*-*-6-*-*-*-*-*-iso10646-*
+*font2:			-*-fixed-*-*-*-*-8-*-*-*-*-*-iso10646-*
+*font3:			-*-fixed-*-*-*-*-10-*-*-*-*-*-iso10646-*
+*font4:			-*-fixed-*-*-*-*-12-*-*-*-*-*-iso10646-*
+*font5:			-*-fixed-*-*-*-*-14-*-*-*-*-*-iso10646-*
+*font6:			-*-fixed-*-*-*-*-16-*-*-*-*-*-iso10646-*
+
+*boldFont:		-*-fixed-medium-r-*-*-14-*-*-*-*-*-iso10646-1
+*fpsfont:		-*-fixed-*-*-*-*-14-*-*-*-*-*-iso10646-*
+*planfont:		-*-fixed-*-*-*-*-14-*-*-*-*-*-iso10646-*
+*messagefont:		-*-fixed-*-*-*-*-14-*-*-*-*-*-iso10646-*
+
+*faceName:		xft:mono:size=10
+*borderWidth:		0
+*internalBorder:	6
+*saveLines:		10000
+*modifyKeyboard:	2
+
+*background:		black
+*foreground:		white
+
+!*color0:		gray10
+!*color1:		tomato4
+!*color2:		ForestGreen
+!*color3:		LightYellow3
+!*color4:		#31609C
+!*color5:		MediumPurple4
+!*color6:		DarkSlateGrey
+!*color7:		gray60
+
+!*color8:		gray30
+!*color9:		tomato
+!*color10:		ForestGreen
+!*color11:		LightYellow4
+!*color12:		gray85
+!*color13:		MediumPurple4
+!*color14:		DarkSlateGrey
+!*color15:		gray70
+!*colorUL:		LightSlateGrey
+!*colorBD:		gray85
+
+*cursorColor:		darkgreen
+*cursorBlink:		true
+*cursorOffTime:		600
+*cursorOnTime:		500
+
+*color0:		#000000
+*color1:		#8B3626
+*color2:		#228B22
+*color3:		#CDCDB4
+*color4:		#31609C
+*color5:		#A479A0
+*color6:		#2F4F4F
+*color7:		#404040
+
+*color8:		#4D4D4D
+*color9:		#FF6347
+*color10:		#09A709
+*color11:		#333200
+!*color12:		#D9D9D9
+*color12:		#505050
+*color13:		#A4797A
+*color14:		#4D6C6C
+*color15:		#B3B3B3
+!*colorUL:		LightSlateGrey
+!*colorBD:		gray85
+
+*colorMode:		on
+*dynamicColors:		on
+
+xlock.font:		-*-fixed-*-*-*-*-14-*-*-*-*-*-iso10646-*
+xlock.planfont:		-*-fixed-*-*-*-*-14-*-*-*-*-*-iso10646-*
+xlock.messagefon:	-*-fixed-*-*-*-*-14-*-*-*-*-*-iso10646-*
+xlock.fpsfont:		-*-fixed-*-*-*-*-14-*-*-*-*-*-iso10646-*
+xlock.fontset:		-*-fixed-*-*-*-*-14-*-*-*-*-*-iso10646-*
+xlock.planfontset:	-*-fixed-*-*-*-*-14-*-*-*-*-*-iso10646-*
+xlock.background:	black
+xlock.foreground:	gray
+xlock.mode:		blank
+
+!xterm*eightBitInput:	false
+!xterm*VT100.translations:	#override <BtnUp>: select-end(CLIPBOARD,PRIMARY,CUT_BUFFER0)
+!URxvt*VT100.translations:	#override <BtnUp>: select-end(CLIPBOARD,PRIMARY,CUT_BUFFER0)
+!Rxvt*VT100.translations:	#override <BtnUp>: select-end(CLIPBOARD,PRIMARY,CUT_BUFFER0)
+!*VT100.translations:		#override <BtnUp>: select-end(CLIPBOARD,PRIMARY,CUT_BUFFER0)
+
+URxvt.termName:		rxvt
+URxvt.scrollstyle:	plain
+URxvt.thickness:	1
+URxvt.urlLauncher:	urlopen
+URxvt.perl-ext-common:	default,matcher
+URxvt.matcher.button:	3
+URxvt.letterSpace:	-1
+URxvt.lineSpace:	1
+URxvt.font:		xft:Monospace:regular:antohint=true:pixelsize=14
+URxvt.boldFont:		xft:Monospace:bold:antohint=true:pixelsize=14
+URxvt.italicFont:	xft:Monospace:italic:antohint=true:pixelsize=14
+URxvt.cursorColor:	darkgreen
+URxvt.cursorBlink:	true
+URxvt.scrollBar:	false
+URxvt.scrollBar_right:	true
+URxvt.saveLines:	50000
+URxvt.background:	#000000
+URxvt.borderColor:	#404040
+URxvt.borderColor2:	#404040
+URxvt.externalBorder:	1
+URxvt.internalBorder:	8
+URxvt.urgentOnBell:	true
+
+URxvt.color0:		#000000
+URxvt.color1:		#8B3626
+URxvt.color2:		#228B22
+URxvt.color3:		#CDCDB4
+URxvt.color4:		#31609C
+URxvt.color5:		#A479A0
+URxvt.color6:		#2F4F4F
+URxvt.color7:		#404040
+URxvt.color8:		#4D4D4D
+URxvt.color9:		#FF6347
+URxvt.color10:		#09A709
+URxvt.color11:		#333200
+URxvt.color12:		#D9D9D9
+URxvt.color13:		#A4797A
+URxvt.color14:		#4D6C6C
+URxvt.color15:		#B3B3B3
+!URxvt.colorUL:		LightSlateGrey
+!URxvt.colorBD:		gray85
+
+gnuplot*noraise:	on
+gnuplot*background:	black
+gnuplot*textColor:	grey70
+
+gnuplot*borderColor:	grey20
+gnuplot*borderWidth:	2
+
+gnuplot*axisColor:	red
+gnuplot*axisWidth:	0
+
+!gnuplot*line1Color:	red
+gnuplot*line1Width:	0
+
+!gnuplot*line2Color:	green
+gnuplot*line2Width:	0
+
+!gnuplot*line3Color:	blue
+gnuplot*line3Width:	0
+
+!gnuplot*line4Color:	magenta
+gnuplot*line4Width:	0
+
+!gnuplot*line5Color:	cyan
+gnuplot*line5Width:	0
+
+!gnuplot*line6Color:	sienna
+gnuplot*line6Width:	0
+
+!gnuplot*line7Color:	orange
+gnuplot*line7Width:	0
+
+!gnuplot*line8Color:	coral
+gnuplot*line8Width:	0
+
+!gnuplot*line9Color:	red2
+gnuplot*line9Width:	0
+
+!gnuplot*line10Color:	green2
+gnuplot*line10Width:	0
+
+!gnuplot*line11Color:	blue2
+gnuplot*line11Width:	0
+
+!gnuplot*line12Color:	magenta2
+gnuplot*line12Width:	0
+
+!gnuplot*line13Color:	cyan2
+gnuplot*line13Width:	0
+
+!gnuplot*line14Color:	sienna2
+gnuplot*line14Width:	0
+
+!gnuplot*line15Color:	orange2
+gnuplot*line15Width:	0
+
+!gnuplot*line16Color:	coral2
+gnuplot*line16Width:	0
+
+XTerm.*on2Clicks:	regex [A-Za-z0-9]*
+XTerm.*on3Clicks:	regex [\.\,A-Za-z0-9_-]*
+XTerm.*on4Clicks:	regex [\.\,/~%A-Za-z0-9_-]*
+XTerm.*on5Clicks:	line
+XTerm.borderColor:	#4A4A4A
+XTerm.borderWidth:	1
+XTerm.internalBorder:	10
+XTerm.faceName:		xft:mono:size=10.5
+!XTerm.faceName:		family=Courier:style=Regular:size=10
+!XTerm.faceName:		Courier
+!XTerm.faceSize:		10
+XTerm.saveLines:	50000
+XTerm.geometry:		87x24
+XTerm.cursorColor:	darkgreen
+XTerm.background:	black
+XTerm.foreground:	grey50
+!XTerm.scaleHeight:	1.01
+XTerm.keyboardType:	vt220
+XTerm*bellIsUrgent:	true
+
+!font settings
+xscreensaver.Dialog.headingFont:        -*-fixed-bold-r-*-*-14-*-*-*-*-*-*-*
+xscreensaver.Dialog.bodyFont:           -*-fixed-medium-r-*-*-14-*-*-*-*-*-*-*
+xscreensaver.Dialog.labelFont:          -*-fixed-medium-r-*-*-14-*-*-*-*-*-*-*
+xscreensaver.Dialog.unameFont:          -*-fixed-medium-r-*-*-14-*-*-*-*-*-*-*
+xscreensaver.Dialog.buttonFont:         -*-fixed-bold-r-*-*-14-*-*-*-*-*-*-*
+xscreensaver.Dialog.dateFont:           -*-fixed-medium-r-*-*-14-*-*-*-*-*-*-*
+xscreensaver.passwd.passwdFont:         -*-fixed-bold-r-*-*-14-*-*-*-*-*-*-*
+!general dialog box (affects main hostname, username, password text)
+xscreensaver.Dialog.foreground:         #404040
+xscreensaver.Dialog.background:         #000000
+
+xscreensaver.Dialog.topShadowColor:     #151515
+xscreensaver.Dialog.bottomShadowColor:  #070707
+
+xscreensaver.Dialog.Button.foreground:  #505050
+xscreensaver.Dialog.Button.background:  #202020
+
+!username/password input box and date text colour
+xscreensaver.Dialog.text.foreground:    #505050
+xscreensaver.Dialog.text.background:    #101010
+
+xscreensaver.Dialog.internalBorderWidth:1
+xscreensaver.Dialog.borderWidth:        1
+xscreensaver.Dialog.shadowThickness:    1
+!timeout bar (background is actually determined by Dialog.text.background)
+xscreensaver.passwd.thermometer.foreground:  #464C69
+xscreensaver.passwd.thermometer.background:  #ffffff
+xscreensaver.passwd.thermometer.width:       8
+!datestamp format--see the strftime(3) manual page for details
+xscreensaver.dateFormat:		%Y-%m-%d, %H:%M
+xscreensaver.timeout:			10
+xscreensaver.lock:			true
+xscreensaver.passwdTimeout:		15
+xscreensaver.captureStderr:		false
+xscreensaver.fade:			false
+xscreensaver.splash:			true
+xscreensaver.newLoginCommand:		bin/xxkbsaver
+xscreensaver.prefsCommand:		bin/xxkbsaver
+!xscreensaver.demoCommand:		fliptext
+xscreensaver.programs:			fliptext \n
