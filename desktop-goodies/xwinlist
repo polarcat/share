@@ -43,6 +43,7 @@ while read wid tmp class usr cmd; do
 		luakit|epiphany) icon=applications-internet ;;
 		firefox) icon=/opt/firefox/browser/chrome/icons/default/default16.png ;;
 		google-chrome-stable) icon=/opt/google/chrome/product_logo_16.png ;;
+		opera) icon=/opt/opera/share/icons/hicolor/16x16/apps/opera-browser.png;;
 		*) ;;
 	esac
 	echo "$class $icon $wid $cmd" >> $_temp
