@@ -1,3 +1,5 @@
 #!/bin/sh
 
-exec /usr/bin/urxvt -tn xterm $@ &
+exec /usr/bin/xterm &
+#exec /usr/bin/urxvt -tn xterm $@ &
+#exec /usr/bin/xterm -geometry 80x25 -sl 10000 -bg black -fg white -b 10 -fa monospace -fs 10.5 &
