@@ -1,0 +1,48 @@
+#include "/home/cat/.gtkrc.mine"
+#include "/home/cat/.themes/Clearlooks-gperfection2/gtk-2.0/gtkrc"
+include "/usr/share/themes/NOX/gtk-2.0/gtkrc"
+style "winlist" {
+	fg[NORMAL]		= "#707070"
+	bg[NORMAL]		= "#101010"
+
+#	fg[PRELIGHT]		= "#909090"
+#	bg[PRELIGHT]		= "#101010"
+
+#	fg[ACTIVE]		= "#b0b0b0"
+#	bg[ACTIVE]		= "#101010"
+
+	fg[INSENSITIVE]		= "#505050"
+	bg[INSENSITIVE]		= "#303030"
+
+	fg[SELECTED]		= "#707070"
+	bg[SELECTED]		= "#303030"
+#
+#	base[NORMAL]		= "#101010" # Text Area Background
+#	base[PRELIGHT]		= "#313131" #
+#	base[ACTIVE]		= "#1d1d1d" # Inactive Selection Background
+#	base[SELECTED]		= "#1d1d1d" # "#0d370f" # Active Selection Background
+#	base[INSENSITIVE]	= "#101010" # Disabled Text Area Background
+
+#	text[NORMAL]		= "#505050"
+#	text[PRELIGHT]		= "#808080"
+#	text[ACTIVE]		= "#303030" # Inactive Selection Text
+#	text[SELECTED]		= "#707070" # Active Selection Text
+#	text[INSENSITIVE]	= "#404040"
+}
+widget_class "*" style "winlist"
+
+#style "tooltip"
+#{
+#	bg[NORMAL] = "#e9e26d"
+#	fg[NORMAL] = "#303030"
+#}
+#widget "gtk-tooltip*" style "tooltip"
+
+style "font"
+{
+	font_name = "Mono 11"
+}
+
+widget_class "*" style "font"
+gtk-font-name = "DejaVu Sans 10"
+gtk-icon-theme-name = "oxygen"

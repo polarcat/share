@@ -1,0 +1,6 @@
+#!/bin/sh
+
+killall cpumon
+exec cpumon -i 50 -n dwmplug -fg 15564351 &
+exec cpumon -i 50 -n dwmplug -c 0 &
+exec cpumon -i 50 -n dwmplug -c 1 &
