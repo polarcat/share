@@ -1,0 +1,22 @@
+src=/usr/share/bash-completion/git-prompt
+if [ -f $src ]; then
+        source $src
+fi
+
+src=/usr/share/bash-completion/git
+if [ -f $src ]; then
+        source $src
+fi
+
+if [ -f $HOME/.gitprompt ]; then
+        source $HOME/.gitprompt
+        # Cool trick to show current git branch in the command prompt in
+        # gentoo colors.
+        PS1='\[\e[1;30m\]$(__git_ps1 "[ git: %s ]")\[\e[0m\]\[\e[1;38m\]'
+fi
+
+#PS1=$PS1'[ $(who -s | grep -Ev "^.*\(:0" | sed "s/[[:blank:]]\+/\//g") ]'
+PS1=$PS1'[ pwd: \w ]'
+#PS1=$PS1'\[\e[0m\]\n\u@\H \[\e[0;37m\]\W\[\e[0m\] '
+PS1=$PS1'\[\e[0m\]\n\u@\H \[\e[0;37m\]>\[\e[0m\] '
+PS1='\[\e]2;\W \u@\H: \w\a\]'$PS1
