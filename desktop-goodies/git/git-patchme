@@ -1,0 +1,126 @@
+#!/bin/sh
+
+_hash=''
+_argp=0
+_args=''
+_vers=''
+_sign=1
+
+_check()
+{
+	if [ -x scripts/checkpatch.pl ]; then
+		scripts/checkpatch.pl $@
+	elif [ -x ./checkpatch.pl ]; then
+		./checkpatch.pl --no-tree $@
+	fi
+}
+
+_usage()
+{
+	echo "$(basename $0) [options] <commit>"
+	echo "Options:"
+	echo "  -h, --help     print this message"
+	echo "  -s, --single   single commit"
+	echo "  -t, --top      last commit"
+	echo "  -l, --letter   with cover letter"
+	echo "  -k, --hack     prefix with hack keyword"
+	echo "  -v, --version  with patch version"
+	echo "  -n  --nosign   do not sign"
+	exit 0
+}
+
+_getopt()
+{
+	while [ $# -gt 0 ]; do
+		case "$1" in
+		-h|--help)
+			_usage
+			;;
+		-s|--single)
+			_args="-1"
+			_argp=$((_argp + 1))
+			;;
+		-t|--top)
+			_args="-1"
+			_hash=$(git log | head -1 | cut -f2 -d' ')
+			;;
+		-l|--letter)
+			_args="--thread --cover-letter"
+			_argp=$((_argp + 1))
+			;;
+		-n|--nosign)
+			_sign=0
+			_argp=$((_argp + 1))
+			;;
+		-v|--version)
+			shift
+			_vers="$1"
+
+			if [ -z "$_vers" ]; then
+				echo "patch version is not specified"
+				exit 1
+			fi
+
+			_argp=$((_argp + 2))
+			;;
+		--)
+			;;
+		esac
+		shift
+	done
+}
+
+_getopt $@
+shift $_argp
+
+if [ -n "$_hash" ]; then
+	echo "commit $_hash"
+elif [ -z "$1" ]; then
+	_usage
+else
+	_hash="$@"
+fi
+
+_dir=$(date +%Y%m%d-%H%M%S)
+
+if [ -n "$_dir" ]; then
+	_dir="patches/$_dir"
+	mkdir -p $_dir
+	_err=$?
+else
+	echo "[error] dirname failed"
+	exit 1
+fi
+
+if [ $_err -ne 0 ]; then
+	echo "[error] failed to create directory $_dir"
+	exit 1
+fi
+
+if [ $_sign -eq 1 ]; then
+	_args=$_args" -s"
+fi
+
+echo git format-patch -o $_dir -n -C -M $_args $_hash
+git format-patch -o $_dir -n -C -M $_args $_hash
+if [ $? -eq 0 ]; then
+	echo "Ok"
+else
+	echo "Failed"
+fi
+
+for patch in $_dir/*; do
+	if echo $patch | grep "0000-cover-letter.patch"; then
+		if [ -n "$_vers" ]; then
+			sed -i "s/Subject: \[PATCH/Subject: \[PATCH v$_vers/" $patch
+		fi
+		continue
+	fi
+	echo "=============================================================================="
+
+	_check $patch
+
+	if [ -n "$_vers" ]; then
+		sed -i "s/Subject: \[PATCH/Subject: \[PATCH v$_vers/" $patch
+	fi
+done
