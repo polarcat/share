@@ -1,0 +1,41 @@
+#!/bin/bash
+
+app=$(basename $0)
+cmd=$(echo $app | cut -f2 -d'-')
+dir=$1
+msk=''
+
+case "$1" in
+--install)
+	if [ -z "$2" ]; then
+		echo "Usage: $app --install <dir>"
+		exit 1
+	fi
+	ln -sf $PWD/$app $2/$app
+	for sufx in asm kconfig makefile headers cpp hpp py; do
+		ln -sf $PWD/$app $2/$app-$sufx
+	done
+	exit 0
+	;;
+esac
+
+shift
+
+if [ -z "$dir" -o -z "$1" ]; then
+	echo "Usage: $app <dir> <exp>"
+	echo "       $app --install <dir>"
+	exit 0
+fi
+
+case "$cmd" in
+asm) msk="";;
+kconfig) msk="Kconfig";;
+makefile) msk="*akefile*";;
+headers) msk="*.h";;
+cpp) msk="*.cpp";;
+hpp) msk="*.hpp";;
+py) msk="*.py";;
+*) msk="*.[chSC]";;
+esac
+
+find $dir -iname "$msk" | xargs grep --color -HnE "$@"
