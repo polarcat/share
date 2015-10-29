@@ -21,6 +21,11 @@
 *background:		black
 *foreground:		white
 
+*on2Clicks:	regex [A-Za-z0-9]*
+*on3Clicks:	regex [A-Za-z0-9\,\.\;\:\\\/\\-\=_\}\{\[\(\)'"'\?\!\<\>\|\*\@\$]*
+*on4Clicks:	regex [\:\.\,/~%A-Za-z0-9_-]*
+*on5Clicks:	line
+
 !*color0:		gray10
 !*color1:		tomato4
 !*color2:		ForestGreen
@@ -185,26 +190,6 @@ gnuplot*line15Width:	0
 
 !gnuplot*line16Color:	coral2
 gnuplot*line16Width:	0
-
-XTerm.*on2Clicks:	regex [A-Za-z0-9]*
-XTerm.*on3Clicks:	regex [\.\,A-Za-z0-9_-]*
-XTerm.*on4Clicks:	regex [\.\,/~%A-Za-z0-9_-]*
-XTerm.*on5Clicks:	line
-XTerm.borderColor:	#4A4A4A
-XTerm.borderWidth:	1
-XTerm.internalBorder:	10
-XTerm.faceName:		xft:mono:size=10.5
-!XTerm.faceName:		family=Courier:style=Regular:size=10
-!XTerm.faceName:		Courier
-!XTerm.faceSize:		10
-XTerm.saveLines:	50000
-XTerm.geometry:		87x24
-XTerm.cursorColor:	darkgreen
-XTerm.background:	black
-XTerm.foreground:	grey50
-!XTerm.scaleHeight:	1.01
-XTerm.keyboardType:	vt220
-XTerm*bellIsUrgent:	true
 
 !font settings
 xscreensaver.Dialog.headingFont:        -*-fixed-bold-r-*-*-14-*-*-*-*-*-*-*
