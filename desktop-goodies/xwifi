@@ -1,0 +1,228 @@
+#!/bin/sh
+
+app=$(basename $0)
+tmp=/tmp/$USER
+ipc=$tmp/$app.ipc
+ic0=~/.icons/wifi.png
+ic1=~/.icons/wifi-mod.png
+
+theme=$HOME/.gtkrc-2.0-lite
+if [ -f $theme ]; then
+	export GTK2_RC_FILES=$theme
+fi
+
+getpid() { pid=$3; }
+getpid $(wmctrl -l -x -p | grep -iE "yad.menu")
+
+if [ -n "$pid" ]; then
+	kill $pid
+	exit 0
+fi
+
+seticon()
+{
+	echo "icon:$ic0" > $ipc
+	echo "tooltip:Interface: $dev\nNetwork: $sid\nAddress: $adr" > $ipc
+}
+
+getlvl() { echo $2; }
+getsid() { echo $2; }
+getadr() { echo $2; }
+
+list()
+{
+	wpa_cli scan >/dev/null
+	wpa_cli scan_results | while read c5 c2 c3 c4 c1; do
+		case "$c5" in
+		Selected|OK|bssid|interface) continue ;;
+		esac
+
+		if [ -z "$c1" ]; then
+			c1="??"
+		fi
+
+		# FIXME: yad does not accept fields started with '-'
+		ifs=$IFS
+		IFS='-'; lvl=$(getlvl $c3)
+		IFS=$ifs
+
+		for line in $(wpa_cli status); do
+			case $line in
+			ssid=*) IFS='='; sid=$(getsid $line) ;;
+			ip_address=*) IFS='='; adr=$(getadr $line) ;;
+			esac
+		done
+		IFS=$ifs
+
+		cur=''
+		if [ "$c1" = "$sid" ]; then
+			cur="(*)"
+			seticon
+		fi
+
+		echo -n "\"$cur\" \"$c1\" \"$lvl\" \"$c4\" \"$c5\" "
+	done
+}
+
+run()
+{
+	cmd="yad --title 'Available networks' --class 'menu' --borders 4 \
+		--width=720 --height=450 \
+		--skip-taskbar --list --no-markup \
+		--button "Refresh:101" --button="More:100" \
+		--button "Ok:102" \
+		--no-headers --sort-by-name --center \
+		--search-column 2 --print-column 2 --separator '' \
+		--column 0 --column 1 --column 2 --column 3 --column 4 "
+	echo "$cmd"$(list) > $tmp/$app
+	chmod +x $tmp/$app
+	$tmp/$app
+}
+
+status()
+{
+	local sid=$1
+
+	wpa_cli status | yad --title '$sid status' --width 400 \
+		--height 400 --center --no-markup --justify left \
+		--button="Ok:0" \
+		--margins 10 --back grey10 --fore grey90 --text-info
+}
+
+line2psk() { echo $2; }
+pass2psk()
+{
+	local sid=$1
+
+	yad --center --title "$cur password" --entry \
+		--entry-label="$sid password" --skip-taskbar --list \
+		--no-markup --no-buttons --no-headers --hide-text='' |
+	wpa_passphrase $sid | while read line; do
+		case $line in
+		psk=*) IFS='='; line2psk $line ;;
+		esac;
+	done
+}
+
+# thanks to link below!
+# http://processors.wiki.ti.com/index.php/Connect_to_Secure_AP_using_WPA_Supplicant
+#
+wpapsk()
+{
+	local sid=$@
+
+	wpa_cli disconnect
+	echo "icon:$ic1" > $ipc
+	echo "tooltip:Disconnected" > $ipc
+
+	wpa_cli list_networks | while read num name flag status; do
+		case $num in Selected|network) continue ;; esac
+		wpa_cli remove_network $num
+	done
+
+	echo "Adding network ..."
+	wpa_cli add_network
+	echo "Selecting algorithm ..."
+	wpa_cli set_network 0 auth_alg OPEN
+	echo "Selecting key management ..."
+	wpa_cli set_network 0 key_mgmt WPA-PSK
+	hash=$(pass2psk $sid)
+	echo "Generating password hash ..."
+	wpa_cli set_network 0 psk "$hash"
+	echo "Setting interface mode ..."
+	wpa_cli set_network 0 mode 0
+	echo "Setting SSID '$sid' ..."
+	wpa_cli set_network 0 ssid "\"$sid\""
+	echo "Selecting network ..."
+	wpa_cli select_network 0
+	echo "Enabling network ..."
+	wpa_cli enable_network 0
+	echo "Associating network ..."
+	wpa_cli reassociate
+}
+
+waitme()
+{
+	local sid=''
+	local adr=''
+	local n=0
+
+	echo "tooltip:Connecting..." > $ipc
+
+	ifs=$IFS
+	for i in 1 2 3 4 5 6 7 8 9 10; do
+		for line in $(wpa_cli status); do
+			case $line in
+			ssid=*) IFS='='; sid=$(getsid $line) ;;
+			ip_address=*) IFS='='; adr=$(getadr $line) ;;
+			esac
+			if [ "$sid" = "$1" -a -n "$adr" ]; then
+				seticon
+				return
+			fi
+		done
+		IFS=$ifs
+		sleep 1
+		if [ $n -eq 0 ]; then
+			echo "icon:$ic0" > $ipc
+			n=1
+		else
+			echo "icon:$ic1" > $ipc
+			n=0
+		fi
+	done
+}
+
+tray()
+{
+	tail -f $ipc |
+	yad --listen --notification --image $ic0 --command xwifi \
+		--text "Wireless connection" >/dev/null 2>&1
+}
+
+retry()
+{
+	yad --center --error --text "Please start dhcpcd and try again"
+}
+
+mkdir -p $tmp
+mkfifo $ipc 2>/dev/null
+
+if [ "$1" == "tray" ]; then
+	tray
+	exit 0
+fi
+
+dev=''
+getdev() { dev=$3; }
+getdev $(wpa_cli ifname)
+
+cur=$(run)
+ret=$?
+
+echo "RC: $ret"
+
+if [ $ret -eq 102 ]; then
+	exit 0
+elif [ $ret -eq 101 ]; then
+	while [ $ret -eq 101 ]; do
+		$app
+		ret=$?
+	done
+	exit 0
+fi
+
+if [ -n "$cur" ]; then
+	if wpa_cli status | grep -E "^ssid=$cur"; then
+		status $cur
+	else
+		if ! pidof dhcpcd; then
+			retry
+			exit 1
+		fi
+
+		wpapsk $cur
+		waitme $cur
+		status $cur
+	fi
+fi
