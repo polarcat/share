@@ -1,0 +1,52 @@
+#!/bin/sh
+
+base=$HOME/.icons
+font="$HOME/src/Font-Awesome/fonts/fontawesome-webfont.ttf"
+
+genpng()
+{
+	local code=$1
+	local file=$base/${2}.png
+	local fmod=$base/${2}-mod.png
+	local pos="+2-2"
+	local off="+2-1"
+
+	if echo $code | grep -qwE "[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]"; then
+		code="\u$code"
+	else
+		font="DejaVu-Sans-Mono"
+	fi
+
+	convert -size 99x99 xc:"rgba(0,0,0,0)" \
+		-fill xc:none -draw "circle 49,49 80,15" /tmp/mask.png
+
+	LC_CTYPE=en_GB.utf8 printf "$code" >/tmp/genicon.code
+	convert /tmp/mask.png \
+		-font $font -pointsize 96 \
+		-gravity center \
+		-fill grey1 -annotate $off @/tmp/genicon.code \
+		-fill white -annotate $pos @/tmp/genicon.code \
+		$file
+	convert -modulate 50 $file $fmod
+}
+
+mkdir -p $base
+
+genpng f02d book
+genpng f107 angle-down
+genpng f103 angle-down-double
+genpng f192 circle-dot
+genpng f10c circle-bold
+genpng f1db circle-thin
+genpng f111 circle-full
+genpng f085 gears
+genpng f013 gear
+genpng f0a3 sun-full
+genpng f185 sun-thin
+genpng f021 refresh
+genpng f1eb wifi
+genpng f007 irssi-online
+genpng f075 irssi-message
+genpng f27a irssi-typing
+
+echo "$base has been updated" | grep --color -E "$base"
