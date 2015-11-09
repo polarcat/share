@@ -1,0 +1,11 @@
+#!/bin/sh
+
+_startx()
+{
+	sleep 1
+	exec startx >$HOME/.xsession-errors 2>&1
+}
+
+cryptmount -m crypt
+_startx &
+exec vlock

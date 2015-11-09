@@ -1,0 +1,30 @@
+#!/bin/sh
+
+wm=dwm-stable
+
+postponed()
+{
+	while ! pidof $wm; do
+		sleep 1
+	done
+	xcpumon &
+	xtray &
+	xwifi tray &
+	xvolume cur
+}
+
+xset -b
+setxkbmap -model pc105 -variant nodeadkeys -option grp:alt_shift_toggle -layout "fi(nodeadkeys),ru"
+xsetroot -solid grey10
+xscreensaver -no-splash &
+xclipboard
+postponed &
+while :; do
+	$HOME/src/dwm/$wm
+	export GTK2_RC_FILES=$HOME/.gtkrc-2.0-lite
+	yad --text-align center --title "Session restart" --center --info --button=Restart:0 --button="Leave session":1 --text "Restart window manager?"
+	if [ $? -eq 1 ]; then
+		break
+	fi
+	export GTK2_RC_FILES=$HOME/.gtkrc.default
+done
