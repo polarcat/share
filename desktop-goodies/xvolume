@@ -3,12 +3,15 @@
 setmax() { max=$2; }
 setvol() { vol=$2; }
 
+strip() { echo $1; }
+
 parseinfo()
 {
 	while [ $# -ne 0 ]; do
-		case $1 in
-		*max=*) IFS='='; setmax $1; IFS=$ifs;;
-		*values=*) IFS='='; setvol $1; IFS=$ifs;;
+		str=$(strip $1)
+		case $str in
+		*max=*) IFS='='; setmax $str; IFS=$ifs;;
+		*values=*) IFS='='; setvol $str; IFS=$ifs;;
 		esac
 		shift 1
 	done
@@ -42,6 +45,5 @@ elif [ $new -ge $max ]; then
 fi
 
 amixer cset "$cid" $new,$new >/dev/null
-amixer sget Master |
-sed '/^ *Front\ Left: /{s/^.*\[\(.*\)%\].*/"mixer \1"/;p;};d;' |
-xargs xsetroot -name
+vol=$(amixer sget Master | grep -E "\%" | cut -f1 -d'%' | cut -f2 -d'[')
+xsetroot -name "mixer $vol"
