@@ -34,6 +34,7 @@ set noai
 runtime $HOME/.vim/plugin/justify.vim
 source $HOME/.vimrc.d/macros/rws.vim
 
+highlight ErrorMsg ctermbg=red ctermfg=black
 highlight RedundantWhitespace ctermbg=red
 highlight Search ctermbg=grey ctermfg=black
 match	  RedundantWhitespace /\s\+$\| \+\ze\t/
@@ -43,5 +44,5 @@ set nospell
 set nopaste
 set tags=./tags,tags,./tags0,tags0,./tags1,tags1
 
-au BufRead,BufNewFile *.qml set filetype=qml
-au! Syntax qml source $HOME/.vim/plugin/qml.vim
+" au BufRead,BufNewFile *.qml set filetype=qml
+" au! Syntax qml source $HOME/.vim/plugin/qml.vim

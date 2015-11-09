@@ -1,0 +1,29 @@
+media-sound/pulseaudio dbus
+net-mail/dovecot -ldap -sqlite -ssl
+media-video/mplayer -dvdnav -gtk
+media-libs/gst-plugins-bad -gles2
+virtual/mysql static-libs -perl ssl
+dev-db/mysql static-libs -perl ssl
+dev-libs/openssl static-libs
+net-misc/networkmanager dhcpcd
+net-wireless/wpa_supplicant qt4 -eap-sim -fasteap gnutls hs2-0 p2p ps3 tdls uncommon-eap-types wimax wps
+dev-lang/php xml cli -hash -truetype -exif -xpm -imap -sharedmem -bcmath -bzip2 -cjk -crypt -ctype -curl -fileinfo -filter -ftp -gmp -iconv -json -opcache -phar -posix -readline -snmp -sockets -spell -ssl -sysvipc -threads -unicode -zlib
+net-libs/webkit-gtk -opengl
+x11-libs/libxcb -python
+x11-proto/xcb-proto -python
+x11-misc/xscreensaver -jpeg -opengl -perl
+dev-vcs/git -gtk
+net-nds/openldap -cxx
+net-libs/webkit-gtk gles2 -geoloc
+dev-qt/qtsql sqlite
+dev-lang/python xml
+dev-libs/libpcre pcre16
+net-dns/avahi dbus
+media-libs/mesa gles2
+dev-qt/qt3support accessibility
+dev-qt/qtgui qt3support accessibility dbus
+dev-qt/qtcore qt3support accessibility
+dev-qt/qtsql qt3support accessibility
+net-wireless/wpa_supplicant ap -qt4
+sys-libs/glibc -vanilla -multilib
+app-text/txt2tags -emacs -tk
