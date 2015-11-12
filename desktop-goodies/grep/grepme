@@ -1,4 +1,8 @@
-#!/bin/bash
+#!/bin/sh
+#
+# Copyright (C) 2015, Aliaksei Katovich <aliaksei.katovich at gmail.com>
+#
+# Released under the GNU General Public License, version 2
 
 app=$(basename $0)
 cmd=$(echo $app | cut -f2 -d'-')

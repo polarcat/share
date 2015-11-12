@@ -1,4 +1,8 @@
 #!/bin/sh
+#
+# Copyright (C) 2015, Aliaksei Katovich <aliaksei.katovich at gmail.com>
+#
+# Released under the GNU General Public License, version 2
 
 base=$HOME/.icons
 font="$HOME/src/Font-Awesome/fonts/fontawesome-webfont.ttf"
