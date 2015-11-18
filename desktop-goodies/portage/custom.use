@@ -6,7 +6,7 @@ virtual/mysql static-libs -perl ssl
 dev-db/mysql static-libs -perl ssl
 dev-libs/openssl static-libs
 net-misc/networkmanager dhcpcd
-net-wireless/wpa_supplicant qt4 -eap-sim -fasteap gnutls hs2-0 p2p ps3 tdls uncommon-eap-types wimax wps
+net-wireless/wpa_supplicant ap wps -hs2-0 -ssl -gnutls -dbus -qt4 -qt5 -wimax
 dev-lang/php xml cli -hash -truetype -exif -xpm -imap -sharedmem -bcmath -bzip2 -cjk -crypt -ctype -curl -fileinfo -filter -ftp -gmp -iconv -json -opcache -phar -posix -readline -snmp -sockets -spell -ssl -sysvipc -threads -unicode -zlib
 net-libs/webkit-gtk -opengl
 x11-libs/libxcb -python
@@ -24,6 +24,7 @@ dev-qt/qt3support accessibility
 dev-qt/qtgui qt3support accessibility dbus
 dev-qt/qtcore qt3support accessibility
 dev-qt/qtsql qt3support accessibility
-net-wireless/wpa_supplicant ap -qt4
 sys-libs/glibc -vanilla -multilib
 app-text/txt2tags -emacs -tk
+x11-terms/xterm toolbar
+sci-visualization/gnuplot wxwidgets
