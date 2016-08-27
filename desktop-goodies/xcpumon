@@ -1,6 +1,13 @@
 #!/bin/sh
 
-killall cpumon
-exec cpumon -i 50 -n dwmplug -fg 15564351 &
-exec cpumon -i 50 -n dwmplug -c 0 &
-exec cpumon -i 50 -n dwmplug -c 1 &
+bg=2105376
+killall -9 cpumon
+
+sleep 1
+exec cpumon -bg $bg -bw 1 -i 50 -fg 15564351 &
+
+for i in 0 1; do
+	sleep 1
+	echo "adding cpu$i ..."
+	exec cpumon -bg $bg -bw 1 -i 50 -c $i &
+done

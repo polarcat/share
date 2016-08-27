@@ -6,35 +6,60 @@
 
 tmp=/tmp/$USER/$(basename $0)
 win=$(xdotool getactivewindow)
+args=''
 
-normfg="#7f7f7f"
-normbg="#000000"
-norm00="#000000"
-norm01="#8B3626"
-norm02="#228B22"
-norm03="#CDCDB4"
-norm04="#31609C"
-norm05="#818025"
-norm06="#2F4F4F"
-norm07="#f05000"
-norm08="#4D4D4D"
-norm09="#FF6347"
-norm10="#09A709"
-norm11="#408010"
-norm12="#D9D9D9"
-norm13="#A4797A"
-norm14="#4D6C6C"
-norm15="#B3B3B3"
+getcolor_()
+{
+	xrdb -query | grep -E "^\*$1:" | sed 's/[[:blank:]]\+/ /' | cut -f2 -d' '
+}
 
-norm04="#818025"
-norm05="#406070"
+normal_()
+{
+	args="--fg=$(getcolor_ foreground) --bg=$(getcolor_ background)"
+	for i in $(seq 0 15); do
+		args="$args --color$i=$(getcolor_ color$i)"
+	done
+}
 
-invfg="#101010"
-invbg="#ffffff"
-invhl="#505050"
-inv00="#ffffff"
-inv01="#858585"
-inv11="#408010"
+inverted_()
+{
+	# auto does not look always good so customize
+	# args="--fg=$(getcolor_ background) --bg=$(getcolor_ foreground)"
+	args="--fg=$(getcolor_ color0) --bg=$(getcolor_ color7)"
+
+	# black
+	color=$(getcolor_ color8)
+	args="$args --color0=$(getcolor_ color7)"
+	args="$args --color8=$(getcolor_ color15)"
+
+	# red
+	args="$args --color1=$(getcolor_ color9)"
+	args="$args --color9=$(getcolor_ color1)"
+
+	# green
+	args="$args --color2=$(getcolor_ color10)"
+	args="$args --color10=$(getcolor_ color2)"
+
+	# yellow
+	args="$args --color3=$(getcolor_ color11)"
+	args="$args --color11=$(getcolor_ color3)"
+
+	# blue
+	args="$args --color4=$(getcolor_ color12)"
+	args="$args --color12=$(getcolor_ color4)"
+
+	# magenta
+	args="$args --color5=$(getcolor_ color13)"
+	args="$args --color13=$(getcolor_ color5)"
+
+	# cyan
+	args="$args --color6=$(getcolor_ color14)"
+	args="$args --color14=$(getcolor_ color6)"
+
+	# white
+	args="$args --color7=$(getcolor_ color0)"
+	args="$args --color15=$(getcolor_ color8)"
+}
 
 mkdir -p $tmp
 
@@ -42,22 +67,14 @@ if [ ! -s $tmp/$win ]; then
 	echo 0 > $tmp/$win
 fi
 
-#xdotool windowactivate $win
-#xdotool windowfocus $win
 while read n; do
 	export TERM=xterm
 	if [ -n "$n" -a $n -eq 0 ]; then
-		xtermcontrol -f --fg=$invfg --bg=$invbg --highlight=$invhl \
-			--color0=$inv00 --color12=$inv01 --color3="#000000" \
-			--color11=$inv11
+		inverted_
 		echo 1 > $tmp/$win
 	else
-		xtermcontrol -f --fg=$normfg --bg=$normbg --color0=$norm00 \
-			--color1=$norm01 --color2=$norm02 --color3=$norm03 \
-			--color4=$norm04 --color5=$norm05 --color6=$norm06 \
-			--color7=$norm07 --color8=$norm08 --color9=$norm09 \
-			--color10=$norm10 --color11=$norm11 --color12=$norm12 \
-			--color13=$norm13 --color14=$norm14 --color15=$norm15
+		normal_
 		echo 0 > $tmp/$win
 	fi
+	xtermcontrol -f $args
 done < $tmp/$win

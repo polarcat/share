@@ -124,7 +124,15 @@ cat $_list | while read class icon wid cmd; do
 		continue
 	fi
 
-	if [ "$class" = "dwmplug" ]; then
+	if [ "$class" = "cpumon" ]; then
+		continue
+	fi
+
+	if [ "$class" = "parcellite.Parcellite" ]; then
+		continue
+	fi
+
+	if [ "$class" = "xclock.XClock" ]; then
 		continue
 	fi
 

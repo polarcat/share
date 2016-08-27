@@ -228,5 +228,6 @@ if [ -n "$cur" ]; then
 		wpapsk $cur
 		waitme $cur
 		status $cur
+		sudo ntpclient -h pool.ntp.org -s
 	fi
 fi

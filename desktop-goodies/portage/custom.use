@@ -28,3 +28,4 @@ sys-libs/glibc -vanilla -multilib
 app-text/txt2tags -emacs -tk
 x11-terms/xterm toolbar
 sci-visualization/gnuplot wxwidgets
+net-im/skype -pulseaudio

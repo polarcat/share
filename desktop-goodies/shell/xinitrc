@@ -4,29 +4,30 @@
 #
 # Released under the GNU General Public License, version 2
 
-wm=dwm-stable
+wm=yawm
 
 postponed()
 {
 	while ! pidof $wm; do
 		sleep 1
 	done
-	xcpumon &
-	xtray &
-	xwifi tray &
-	xvolume cur
+	sleep 1
+	xmodmap ~/.Xmodmap
 }
 
 xset -b
-setxkbmap -model pc105 -variant nodeadkeys -option grp:alt_shift_toggle -layout "fi(nodeadkeys),ru"
-xsetroot -solid grey10
+setxkbmap -model pc105 -variant nodeadkeys -option grp:alt_shift_toggle \
+	-layout "fi(nodeadkeys),ru"
+xsetroot -solid grey10 -cursor_name left_ptr
 xscreensaver -no-splash &
-xclipboard
 postponed &
 while :; do
-	$HOME/src/dwm/$wm
+	log=$HOME/yawm${DISPLAY}.log
+	YAWM_LOG=$log $wm
 	export GTK2_RC_FILES=$HOME/.gtkrc-2.0-lite
-	yad --text-align center --title "Session restart" --center --info --button=Restart:0 --button="Leave session":1 --text "Restart window manager?"
+	yad --text-align center --title "Session restart" --center --info \
+		--button=Restart:0 --button="Leave session":1 \
+		--text "Restart window manager?"
 	if [ $? -eq 1 ]; then
 		break
 	fi

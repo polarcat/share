@@ -43,6 +43,8 @@ set formatoptions+=t
 set nospell
 set nopaste
 set tags=./tags,tags,./tags0,tags0,./tags1,tags1
+set fillchars=vert:\|
 
+colorscheme apprentice
 " au BufRead,BufNewFile *.qml set filetype=qml
 " au! Syntax qml source $HOME/.vim/plugin/qml.vim

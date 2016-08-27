@@ -1,5 +1,6 @@
 #!/bin/sh
 
+killall parcellite
 theme=$HOME/.gtkrc-2.0-lite
 if [ -f $theme ]; then
 	export GTK2_RC_FILES=$theme

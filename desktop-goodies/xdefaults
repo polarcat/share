@@ -51,25 +51,40 @@
 *background:		#050505
 *foreground:		#efefef
 
+! black
 *color0:		#000000
-*color1:		#707070
-*color2:		#228B22
-*color3:		#CDCDB4
-*color4:		#31609C
-*color5:		#987595
-*color6:		#2F4F4F
-*color7:		#ffffff
-
 *color8:		#4D4D4D
+
+! red
+*color1:		#707070
 *color9:		#FF6347
+
+! green
+*color2:		#228B22
 *color10:		#09A709
+
+! yellow
+*color3:		#CDCDB4
 *color11:		#817F21
+
+! blue
+*color4:		#31609C
 *color12:		#505050
+
+! magenta
+*color5:		#987595
 *color13:		#946566
+
+! cyan
+*color6:		#2F4F4F
 *color14:		#4D6C6C
+
+! white
+*color7:		#ffffff
 *color15:		#B3B3B3
-!*colorUL:		LightSlateGrey
-!*colorBD:		gray85
+
+*colorUL:		LightSlateGrey
+*colorBD:		gray85
 
 *colorMode:		on
 *dynamicColors:		on
