@@ -15,9 +15,9 @@ case "$1" in
 		echo "Usage: $app --install <dir>"
 		exit 1
 	fi
-	ln -sf $PWD/$app $2/$app
+	ln -sf $0 $2/$app
 	for sufx in asm kconfig makefile headers cpp hpp py; do
-		ln -sf $PWD/$app $2/$app-$sufx
+		ln -sf $0 $2/$app-$sufx
 	done
 	exit 0
 	;;
@@ -32,14 +32,15 @@ if [ -z "$dir" -o -z "$1" ]; then
 fi
 
 case "$cmd" in
-asm) msk="";;
-kconfig) msk="Kconfig";;
-makefile) msk="*akefile*";;
-headers) msk="*.h";;
-cpp) msk="*.cpp";;
-hpp) msk="*.hpp";;
-py) msk="*.py";;
-*) msk="*.[chSC]";;
+asm) expr='^.*[.]asm$';;
+kconfig) expr='Kconfig$';;
+makefile) expr='^.*akefile.*\|^.*[.]mk$';;
+headers) expr='^.*h$\|^.*hpp$';;
+cpp) expr='^.*[.]cpp$';;
+hpp) expr='^.*[.]hpp$';;
+py) expr='^.*[.]py$';;
+*) expr='^.*[.]c$\|^.*[.]h$\|^.*[.]C$\^.*[.]H$\|^.*[.]cpp$\|^.*[.]hpp$';;
 esac
 
-find $dir -iname "$msk" | xargs grep --color -HnE "$@"
+set -x
+find -L $dir -regex ${expr} | xargs grep --color -HnE "$@"
