@@ -1,35 +1,11 @@
 #!/bin/sh
-#
-# Copyright (C) 2015, Aliaksei Katovich <aliaksei.katovich at gmail.com>
-#
-# Released under the GNU General Public License, version 2
-
-wm=yawm
-
-postponed()
-{
-	while ! pidof $wm; do
-		sleep 1
-	done
-	sleep 1
-	xmodmap ~/.Xmodmap
-}
 
 xset -b
 setxkbmap -model pc105 -variant nodeadkeys -option grp:alt_shift_toggle \
 	-layout "fi(nodeadkeys),ru"
-xsetroot -solid grey10 -cursor_name left_ptr
+xsetroot -solid black -cursor_name left_ptr
 xscreensaver -no-splash &
-postponed &
+
 while :; do
-	log=$HOME/yawm${DISPLAY}.log
-	YAWM_LOG=$log $wm
-	export GTK2_RC_FILES=$HOME/.gtkrc-2.0-lite
-	yad --text-align center --title "Session restart" --center --info \
-		--button=Restart:0 --button="Leave session":1 \
-		--text "Restart window manager?"
-	if [ $? -eq 1 ]; then
-		break
-	fi
-	export GTK2_RC_FILES=$HOME/.gtkrc.default
+	. ~/.fwmrc
 done
