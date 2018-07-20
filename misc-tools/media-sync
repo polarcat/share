@@ -1,0 +1,166 @@
+#!/bin/sh
+
+ee()
+{
+	printf "\033[0;31m(ee)\033[0m $@"
+}
+
+ii()
+{
+	printf "\033[0;32m(ee)\033[0m $@"
+}
+
+if [ $# -ne 2 ]; then
+	app=$(basename $0)
+	echo "Usage: $app <srcdir> <dstdir>"
+	echo "Example:"
+	echo "  $app /sdcard/DCIM /opt/photos"
+	echo "  $app adb:/sdcard/DCIM /opt/photos"
+	exit 0
+fi
+
+ifs_=$IFS
+src_="$1"
+dst_="$2"
+adb_=''
+cpy_="cp -f"
+tmp_=$dst_/.tmp
+cur_=$tmp_/current.jpg
+newmsg_="\033[1;32mnew\033[0m"
+oldmsg_="\033[1;33mold\033[0m"
+
+setadb() { adb_="$1"; src_="$2"; }
+
+IFS=':'; setadb $1; IFS=$ifs_
+
+if [ -z "$src_" ]; then
+	src_=$1
+	adb_=''
+else
+	if ! which adb >/dev/null; then
+		ee "adb not found\n"
+		exit 1
+	fi
+
+	adb_="adb shell"
+	cpy_="adb pull"
+fi
+
+echo "ADB: $adb_"
+echo "CPY: $cpy_"
+echo "SRC: $src_"
+echo "DST: $dst_"
+
+if [ -z "$src_" ]; then
+	exit 0
+fi
+
+if ! which exiftool >/dev/null; then
+	ee "exiftool not found\n"
+	exit 1
+fi
+
+sum_=0
+getsum() { sum_=$1; }
+
+getdate()
+{
+	local type=$1
+	local sum=$2
+	shift 2
+	exiftool -d "%Y %m %Y%m%d-%H%M%S-%s-$sum" $type -S -s "$@"
+}
+
+process()
+{
+	local info=''
+	local date=''
+	local path=''
+
+	getsum $(md5sum $cur_)
+	info=$(getdate -DateTimeOriginal "$sum_" "$cur_")
+
+	if [ -z "$info" ]; then
+		mkdir -p $dst_/nodate
+		path="$dst_/nodate/$sum_.jpg"
+		if [ -f $path ]; then
+			printf "$oldmsg_ $path\n"
+			echo "$@ -> $path" >> $tmp_/old
+		else
+			printf "$newmsg_ $@ "
+			echo "$@ -> $path" >> $tmp_/new
+			mv -v "$cur_" "$path"
+		fi
+		return
+	fi
+
+	echo "$info" | while read year mon file; do
+		mkdir -p $dst_/$year/$mon
+		path="$dst_/$year/$mon/$file.jpg"
+
+		if [ -f $path ]; then
+			printf "$oldmsg_ $path\n"
+			echo "$@ -> $path" >> $tmp_/old
+		else
+			printf "$newmsg_ $@ "
+			echo "$@ -> $path" >> $tmp_/new
+			mv -v "$cur_" "$path"
+		fi
+	done
+}
+
+find_md5()
+{
+	local sum=$1
+
+	if [ -n "$sum" ]; then
+		echo "FIND $sum"
+#		find $dst_ -name "*$sum*"
+#		if ! find $dst_ -name "*$sum*"; then
+#			continue
+#		fi
+		return 1
+	fi
+
+	return 0
+}
+
+remote_md5() { return find_md5 $(adb shell md5sum $1); }
+
+mkdir -p $tmp_
+set -e
+cd $tmp_
+echo -n > $tmp_/new
+echo -n > $tmp_/old
+
+$adb_ find $src_ -type f -iname "*.jpg" -o -iname "*.jpeg" |
+tr -d '\r' |
+while read name; do
+	case $name in
+	*.thumbnails*) printf "\033[0;32mskip\033[0m thumbnail $name\n"
+		continue
+		;;
+	esac
+
+	# try to skip files by computing md5 on the phone
+#	if [ -n "$adb_" ]; then
+#		remote_md5 $name
+#	fi
+
+	$cpy_ "$name" $cur_
+	process "$name"
+done
+
+cd $dst_
+for year in *; do
+	if [ "$year" = "nodate" ]; then
+		continue
+	fi
+	cd $year
+	find . -type f -name "*.jpg" -exec ln -sf {} . \;
+	cd $dst_
+done
+
+echo "Done"
+printf "  $newmsg_ files $(wc -l $tmp_/new)\n"
+printf "  $oldmsg_ files $(wc -l $tmp_/old)\n"
