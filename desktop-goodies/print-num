@@ -1,0 +1,28 @@
+#!/bin/sh
+
+ifs_=$IFS
+num_=0
+
+getnum16() { num_=$(echo $2 | tr '[:lower:]' '[:upper:]'); }
+getnum1() { num_=$1; }
+
+case $1 in
+0x*)
+	IFS='x'; getnum16 $1; IFS=$ifs_
+	printf "num: "; echo "ibase=16; $num_" | bc
+	printf "bin: "; echo "ibase=16; obase=2; $num_" | bc
+	;;
+*b)
+	IFS='b'; getnum1 $1; IFS=$ifs_
+	num=$(echo "ibase=2; $num_" | bc)
+	echo "num: $num"
+	printf "hex: %#x\n" $num
+	;;
+[0-9]*)
+	printf "hex: 0x"; echo "obase=16; $1" | bc
+	printf "bin: "; echo "obase=2; $1" | bc
+	;;
+*)
+	echo "Usage: $(basename $0) <num>"
+	;;
+esac
