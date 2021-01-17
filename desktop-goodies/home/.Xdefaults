@@ -12,16 +12,16 @@
 *planfont:		-*-fixed-*-*-*-*-14-*-*-*-*-*-iso10646-*
 *messagefont:		-*-fixed-*-*-*-*-14-*-*-*-*-*-iso10646-*
 
-*faceName:		xft:mono:size=10
+*faceName:		xft:mono:size=10.5
 *borderWidth:		0
 *internalBorder:	6
-*saveLines:		10000
+*saveLines:		16384
 *modifyKeyboard:	2
 
-*on2Clicks:	regex [A-Za-z0-9]*
-*on3Clicks:	regex [A-Za-z0-9\,\.\;\:\\\/\\-\=_\}\{\[\(\)'"'\?\!\<\>\|\*\@\$]*
-*on4Clicks:	regex [\:\.\,/~%A-Za-z0-9_-]*
-*on5Clicks:	line
+*on2Clicks:	regex [\:\.\,/~%A-Za-z0-9_-]*
+*on3Clicks:	regex [A-Za-z0-9]*
+*on4Clicks:	line
+!*on5Clicks:	regex [A-Za-z0-9\,\.\;\:\\\/\\-\=_\}\{\[\(\)'"'\?\!\<\>\|\*\@\$]*
 
 !*color0:		gray10
 !*color1:		tomato4
@@ -70,6 +70,8 @@
 ! blue
 *color4:		#31609C
 *color12:		#505050
+
+XTerm.VT100.color12:	#a0b0c0
 
 ! magenta
 *color5:		#987595
@@ -148,8 +150,8 @@ URxvt.urgentOnBell:	true
 !URxvt.colorBD:		gray85
 
 gnuplot*noraise:	on
-gnuplot*background:	black
-gnuplot*textColor:	grey70
+gnuplot*background:	white
+gnuplot*textColor:	grey10
 
 gnuplot*borderColor:	grey20
 gnuplot*borderWidth:	2
@@ -246,3 +248,18 @@ xscreensaver.newLoginCommand:		bin/xxkbsaver
 xscreensaver.prefsCommand:		bin/xxkbsaver
 !xscreensaver.demoCommand:		fliptext
 xscreensaver.programs:			fliptext \n
+
+!Xterm.VT100.printerControlMode: 2
+!XTerm.VT100.printerAutoClose: true
+XTerm.VT100.printAttributes: 2
+!XTerm.VT100.printerCommand: xterm-buffer 3<&0
+!XTerm.VT100.printerCommand: cat - | xterm-buffer
+!XTerm.VT100.printerCommand: cat - > /tmp/cat/1.log
+!XTerm.vt100.printerCommand: xterm -e sh -c 'less -R <&3' 3<&0
+!XTerm.vt100.printerCommand: xterm -e sh -c 'sed "s/^\x1b[#]5//g" <&3 | less -R' 3<&0
+XTerm.vt100.printerCommand: xterm -e sh -c xterm-buffer 3<&0
+!XTerm.VT100.translations: #override Ctrl ~Meta ~Shift <Key>Delete: print-everything()
+*VT100.translations: #override ~Ctrl ~Meta Shift <Key>Delete: print-everything()
+*VT100.backarrowKey: false
+!Xterm.VT100.Translations: #override <Key>BackSpace: string(0x7F)
+*ttyModes: erase ^?

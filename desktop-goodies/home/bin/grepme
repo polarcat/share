@@ -34,13 +34,14 @@ fi
 case "$cmd" in
 asm) expr='^.*[.]asm$';;
 kconfig) expr='Kconfig$';;
-makefile) expr='^.*akefile.*\|^.*[.]mk$';;
+makefile) expr='^.*akefile.*\|^.*[.]mk$\|^.*[.]gn$\|^.*build.gradle$\|^.*[.]txt$\|^.*[.]cmake$';;
 headers) expr='^.*h$\|^.*hpp$';;
 cpp) expr='^.*[.]cpp$';;
+java) expr='^.*[.]java$';;
 hpp) expr='^.*[.]hpp$';;
 py) expr='^.*[.]py$';;
-*) expr='^.*[.]c$\|^.*[.]h$\|^.*[.]C$\^.*[.]H$\|^.*[.]cpp$\|^.*[.]hpp$';;
+*) expr='^.*[.]c$\|^.*[.]h$\|^.*[.]C$\^.*[.]H$\|^.*[.]cpp$\|^.*[.]hpp\|^.*[.]cc$';;
 esac
 
 set -x
-find -L $dir -regex ${expr} | xargs grep --color -HnE "$@"
+find -L $dir -regex "${expr}" | xargs grep --color -iHnE $@ 2>/dev/null

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+sed "s/^\x1b[#]5//g" <&3 | less -R
+exit 0

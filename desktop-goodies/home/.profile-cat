@@ -1,0 +1,179 @@
+#!/bin/sh
+
+ifs_=$IFS
+
+#right=''
+#arrow=' '
+#play=''
+#gt=''
+gt='>'
+play=$gt
+
+setpath()
+{
+	case $PATH in
+	*$1*) ;;
+	*) export PATH=$PATH:$1;;
+	esac
+}
+
+branch_=''
+branch() { eval branch_=\$$#; }
+
+githead_=''
+githead()
+{
+	local n=$#
+	local path=''
+	local head=''
+
+	IFS=$ifs_
+	githead_=''
+
+	if [ -f .git/HEAD ]; then
+		githead_=".git/HEAD"
+		return
+	fi
+
+	while [ $n -gt 0 ]; do
+		path='../'$path
+		head=${path}.git/HEAD
+		n=$((n - 1))
+
+		if [ ! -f $head ]; then
+			continue
+		fi
+
+		githead_=$head
+		return
+	done
+}
+
+gitps()
+{
+	IFS='/'; githead $PWD; IFS=$ifs_
+
+	if [ -z "$githead_" ]; then
+		printf ""
+		return
+	fi
+
+	branch_=''
+
+	while read line; do
+		IFS='/'; branch $line; IFS=$ifs_
+	done < $githead_
+
+	if [ -z "$branch_" ]; then
+		printf ""
+	else
+#		if [ "$TERM" = "linux" ]; then
+#			printf ":\033[1;36m$branch_\033[0m"
+		if [ $# -eq 1 ]; then
+			printf "[$branch_] "
+		elif [ -n $bash_ ]; then
+			box_color="\[\e[0m\]\[\e[0;94m\]"
+			git_color="\[\e[0m\]\[\e[0;94m\]"
+			printf "${box_color}■${git_color} $branch_"
+		else
+			printf " $branch_ "
+		fi
+	fi
+}
+
+gitps0() { git describe --contains --all HEAD 2>/dev/null; }
+
+devps()
+{
+	if [ -z "$ANDROID_SERIAL" ]; then
+		return
+	fi
+	if [ "$TERM" = "linux" ]; then
+		printf "$ANDROID_SERIAL "
+	else
+		printf "  $ANDROID_SERIAL "
+	fi
+}
+
+ifchroot()
+{
+	ls -id / | while read inode path; do
+		if [ "$inode" = "2" ]; then
+			return 0
+		else
+			return 1
+		fi
+	done
+}
+
+xtermps()
+{
+	if ifchroot; then
+		chroot_=''
+	else
+		chroot_='ch::'
+	fi
+
+	if [ -n $bash_ ]; then
+		path_color="\[\e[0m\]\[\e[1;94m\]"
+		led_color="\[\e[0m\]\[\e[0;90m\]"
+		line0="$user_color${chroot_}\u ${play_color}$play"
+		line1="$host_color\H ■ $path_color\w "
+		line2="${git_color}$(gitps)"
+		PS1="$line1$line2\n$line0 \[\e[0m\]"
+	else
+		path_color="\[\e[0m\]\[\e[1;94m\]"
+		git_color="\[\e[0m\]\[\e[0;95m\]"
+		line0="$host_color\H $play $user_color${chroot_}\u ${play_color}$play"
+		line1="$path_color \w${git_color}$(gitps)${path_color}$gt \[\e[0m\]"
+		title="\[\e]0;\]$(gitps)\w\a"
+		PS1="$line0$line1$title"
+	fi
+}
+
+cd() { command cd "$@" && xtermps; }
+git() { command git "$@" && xtermps; }
+
+setpath $HOME/bin
+
+export EDITOR=vim
+
+[ -z "$PS1" ] && return # If not running interactively, don't do anything
+
+alias ls='ls --color'
+alias grep='grep --color'
+
+if [ "$USER" = "root" ]; then
+	user_color="\[\e[0m\]\[\e[1;93m\]"
+	play_color="\[\e[0m\]\[\e[0;93m\]"
+	host_color="\[\e[0m\]\[\e[1;90m\]"
+else
+	user_color="\[\e[0m\]\[\e[1;94m\]"
+	play_color="\[\e[0m\]\[\e[1;94m\]"
+	host_color="\[\e[0m\]\[\e[1;90m\]"
+fi
+
+if [ "$TERM" = "linux" ]; then
+#	PS1='\H@\u \w$(gitps) > '
+	gt='>'
+fi
+
+xtermps
+
+if [ -f ~/.sdkrc ]; then
+	source ~/.sdkrc
+fi
+
+export PATH
+
+# Enable programmable sdb completion features.
+#source ~/.sdb/.sdb-completion.bash
+#source ~/.bashrc_sdk
+#source ~/.bashrc_jdk
+#setpath "/usr/lib/git-core"
+#setpath "/usr/games/bin"
+
+# FIXME: this fixes sefault in i965_dri.so
+
+export MESA_GLSL_CACHE_DISABLE=1
+export XTERM_TTY=$(tty)
