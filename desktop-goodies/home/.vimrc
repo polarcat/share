@@ -1,5 +1,5 @@
-map <F1>	<ESC>:resize -1<CR>
-map <F2>	<ESC>:resize +1<CR>
+" map <F1>	<ESC>:resize -1<CR>
+" map <F2>	<ESC>:resize +1<CR>
 
 map <F3>	<ESC>:bprev<CR>
 map <F4>	<ESC>:bnext<CR>
@@ -14,7 +14,9 @@ map <F11>	<ESC>:source $HOME/.vimrc.d/macros/rws.vim<CR>
 map z		<ESC>:undo<CR>
 map u		<ESC>:"not mapped"<CR>
 
-vmap <C-c>	<ESC>:w !clipboard<CR><CR>
+" vmap <C-c>	<ESC>:w !clipboard<CR><CR>
+vmap <C-c>	<ESC>:'<,'>w! /tmp/clipboard<CR><CR>
+vmap <C-a>	<ESC>:r /tmp/clipboard<CR><CR>
 
 " select block
 " g CTRL+A --> increment selected numbers inside block
@@ -33,6 +35,7 @@ syntax on
 set mouse=""
 set syntax=sh
 set backspace=indent,eol,start
+noremap! <C-?> <C-h>
 set autoindent
 set noai
 runtime $HOME/.vim/plugin/justify.vim

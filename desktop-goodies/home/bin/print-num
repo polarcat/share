@@ -6,11 +6,24 @@ num_=0
 getnum16() { num_=$(echo $2 | tr '[:lower:]' '[:upper:]'); }
 getnum1() { num_=$1; }
 
+print_bits()
+{
+	local len=$(echo "$@" | bc | wc -c)
+	echo "$@" | bc | awk '{gsub(/.{1}/,"&  ")}1'
+	i=$((len-2))
+	while [ $i -ge 0 ]; do
+		printf "%02u " $i
+		i=$((i-1))
+	done
+	echo
+}
+
 case $1 in
 0x*)
 	IFS='x'; getnum16 $1; IFS=$ifs_
 	printf "num: "; echo "ibase=16; $num_" | bc
 	printf "bin: "; echo "ibase=16; obase=2; $num_" | bc
+	print_bits "ibase=16; obase=2; $num_"
 	;;
 *b)
 	IFS='b'; getnum1 $1; IFS=$ifs_
@@ -21,6 +34,7 @@ case $1 in
 [0-9]*)
 	printf "hex: 0x"; echo "obase=16; $1" | bc
 	printf "bin: "; echo "obase=2; $1" | bc
+	print_bits "obase=2; $1"
 	;;
 *)
 	echo "Usage: $(basename $0) <num>"

@@ -62,7 +62,7 @@ hi Statusline guibg=#5c5c5c guifg=#d0d0d0 gui=NONE ctermbg=241 ctermfg=252 cterm
 hi StatuslineNC guibg=#3a3a3a guifg=#9e9e9e gui=NONE ctermbg=237 ctermfg=247 cterm=NONE
 hi StatuslineTerm guibg=#005f87 guifg=#d0d0d0 gui=NONE ctermbg=24 ctermfg=252 cterm=NONE
 hi StatuslineTermNC guibg=#005f87 guifg=#9b9b9b gui=NONE ctermbg=24 ctermfg=237 cterm=NONE
-hi VertSplit guibg=#202020 guifg=#202020 gui=NONE ctermbg=237 ctermfg=237 cterm=NONE
+hi VertSplit guibg=#101010 guifg=#607080 gui=NONE ctermbg=237 ctermfg=237 cterm=NONE
 hi! link TabLine StatusLineNC
 hi! link TabLineFill TabLine
 hi! link TabLineSel LessThanNormal
